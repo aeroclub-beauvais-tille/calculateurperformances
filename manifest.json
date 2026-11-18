@@ -1,6 +1,6 @@
 {
-  "name": "Calculateur Performances ACBT",
-  "short_name": "Perfs ACBT",
+  "name": "Performances ACBT",
+  "short_name": "Performances",
   "description": "Calculateur de performances décollage/atterrissage",
   "start_url": "/",
   "display": "standalone",
@@ -8,8 +8,21 @@
   "theme_color": "#0e3070",
   "orientation": "any",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
