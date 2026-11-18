@@ -1054,6 +1054,13 @@ body.sheet-open{overflow:hidden}
   .pv-footer{position:fixed;bottom:6mm;left:14mm;right:14mm;display:flex;justify-content:space-between;font:400 6pt 'Inter';color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:2mm}
 }
 
+
+/* Carburant : choix à faire bien visible, réserve imposée en valeur fixe, bilan toujours visible */
+#fuelOnboardTg:not(:has(.is-selected)){box-shadow:inset 0 0 0 1.5px var(--accent)}
+.res-tg[hidden],.res-fixed[hidden]{display:none!important}
+.res-fixed{font:800 16px var(--body);color:var(--ink);white-space:nowrap}
+#fuelLive{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:5}
+#fuelLive:has(details[open]){position:static}
 </style>
 </head>
 <body>
@@ -1393,7 +1400,7 @@ body.sheet-open{overflow:hidden}
           <div class="blk-h"><span class="bt"><i>1</i>Carburant à bord</span></div>
           <div class="toggle-group" id="fuelOnboardTg">
             <button id="fuelFullBtn" class="toggle-btn" type="button">Plein<small><span id="fuelFullL">—</span> L</small></button>
-            <button id="fuelUsedBtn" class="toggle-btn" type="button">Plein entamé<small>selon le temps de vol</small></button>
+            <button id="fuelUsedBtn" class="toggle-btn" type="button">Autre quantité<small>temps de vol ou litres</small></button>
           </div>
           <div class="blk" id="fuelUsedWrap" hidden>
             <span class="sub">Temps de vol depuis le dernier plein</span>
@@ -1447,6 +1454,7 @@ body.sheet-open{overflow:hidden}
               <button id="fuelRes30" class="toggle-btn" type="button" data-res="30">30 min</button>
               <button id="fuelRes45" class="toggle-btn" type="button" data-res="45">45 min</button>
             </div>
+            <b class="res-fixed" id="fuelResFixed" hidden>45 min</b>
           </div>
           <span class="note" id="fuelResTxt"></span>
           <span class="note res-why" id="fuelResWhy" hidden></span>
@@ -6222,7 +6230,7 @@ if ('serviceWorker' in navigator) {
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$id('acSheet').hidden) acSheetClose(); });
 
   // Carénages : réglage déplacé dans l'onglet Carburant (ils ne jouent que sur la consommation)
-  try { const sw = $id('spatsWrap'), al = document.querySelector('#stepFuel .ac-line'); if (sw && al) al.after(sw); } catch (e) {}
+  try { const sw = $id('spatsWrap'), al = $id('fuelAcFields'); if (sw && al) al.after(sw); } catch (e) {}  // carénages : avec la consommation, sous « Modifier »
 
   /* ── Fiche : fiches enregistrées sous la fiche du vol ── */
   function renderFicheHist() { try { window.__fhRender && window.__fhRender(); } catch (e) {} }
@@ -6834,15 +6842,16 @@ if ('serviceWorker' in navigator) {
     const conso = val('fuelConso'), un = val('fuelUnusable');
     const fac = window.__spatsFuelFactor();
     $id('fuelAcSumTxt').textContent = conso
-      ? String(conso).replace('.', ',') + ' L/h' + (fac > 1 ? ' + 3 % (sans carénages)' : '') + ' · ' + (un || '0') + ' L inutilisable'
+      ? String(conso).replace('.', ',') + ' L/h' + (fac > 1 ? ' + 3 %' : '') + ' · ' + (un || '0') + ' L inutilisable' + (showSpats ? (withSpats ? ' · avec carénages' : ' · sans carénages') : '')
       : 'Consommation à renseigner';
     $id('fuelAcFields').hidden = !(fuelAcOpen || !conso);
+    $id('spatsWrap').hidden = !showSpats || $id('fuelAcFields').hidden;
     $id('fuelAcEdit').textContent = fuelAcOpen ? 'Fermer' : 'Modifier';
     renderFuel();
     if (!fuelMode) {
       const box = $id('fuelVerdict');
       box.className = 'fuel-verdict is-neutral';
-      box.innerHTML = '<div class="fuel-verdict-title">Indique le carburant à bord</div><div class="fuel-verdict-sub">Choisis « Plein » ou « Plein entamé », puis le temps de vol aller.</div>';
+      box.innerHTML = '<div class="fuel-verdict-title">Indique le carburant à bord</div><div class="fuel-verdict-sub">Choisis « Plein » ou « Autre quantité », puis le temps de vol aller.</div>';
     } else if (fuelMode === 'used' && !(usedMin() > 0)) {
       const box = $id('fuelVerdict');
       box.className = 'fuel-verdict is-neutral';
@@ -7154,8 +7163,11 @@ if ('serviceWorker' in navigator) {
     }
     resForced = why;
     $id('fuelRes30').disabled = !!why;
+    // Réserve imposée : on affiche la valeur, pas un choix qui n'en est pas un
+    document.querySelector('#stepFuel .res-tg').hidden = !!why;
+    $id('fuelResFixed').hidden = !why;
     $id('fuelResWhy').hidden = !why;
-    $id('fuelResWhy').textContent = why === 'acbt' ? '45 min imposées par l\'ACBT pour ses avions.' : why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : '';
+    $id('fuelResWhy').textContent = why === 'acbt' ? 'Imposée par l\'ACBT pour ses avions.' : why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : '';
   }
   function renderFuel() {
     try { applyReserveRule(); } catch (e) { /* règles chargées plus loin au démarrage */ }
