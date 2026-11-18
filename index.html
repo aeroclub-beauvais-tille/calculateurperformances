@@ -880,6 +880,70 @@ body[data-view="fiche"] .fiche{margin-top:0}
 .sheet h2{font:800 20px/1 var(--body);letter-spacing:-.01em;text-transform:none}
 .app-footer{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
 
+/* ═══════════ Onglet Centrage ═══════════ */
+.cgp{display:none;flex-direction:column;gap:12px}
+body[data-view="cg"] .cgp{display:flex}
+body[data-view="cg"] .step.is-open{display:none}
+body[data-view="cg"] .fiche,body[data-view="cg"] .scope{display:none}
+.cg-link{align-self:flex-start;margin-top:6px;font:700 13px var(--body);color:var(--accent);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;cursor:pointer}
+.cgp-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+.cgp-none{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 14px;font:500 14px/1.5 var(--body);color:var(--muted)}
+.cgp-none b{color:var(--ink)}
+.cgp-bt{font:700 12.5px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cgp-bt i{font-style:normal;width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font:800 11px var(--body);letter-spacing:0}
+.cgp-pes{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;font:500 13px var(--body);color:var(--muted);margin-bottom:4px}
+.cgp-pes b{color:var(--ink);font-weight:700}
+.cgp-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.cgp-row:first-child{border-top:0}
+.cgp-row .rl b{display:block;font:700 15px var(--body)}.cgp-row .rl span{font:500 12px var(--body);color:var(--muted)}
+.cgp-row .rl span.bad{color:var(--err);font-weight:700}
+.cgp-stp{display:flex;align-items:center;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;height:44px;background:var(--card)}
+.cgp-stp button{width:42px;height:100%;font:600 20px var(--body);color:var(--muted);background:none;border:0;cursor:pointer}
+.cgp-stp button:active{background:var(--field)}
+.cgp-stp input{width:58px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;font:700 17px var(--body);color:var(--ink);background:var(--card);-moz-appearance:textfield;border-radius:0}
+.cgp-stp input::-webkit-outer-spin-button,.cgp-stp input::-webkit-inner-spin-button{-webkit-appearance:none}
+.cgp-fuel{padding-top:10px;border-top:1px solid var(--line)}
+.cgp-fuel .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cgp-fuel .hd b{font:700 15px var(--body)}.cgp-fuel .hd span{font:500 12px var(--body);color:var(--muted)}
+.cgp-fuel .val{font:300 26px/1 var(--body);white-space:nowrap}.cgp-fuel .val small{font:600 13px var(--body);color:var(--muted)}
+.cgp-fuel input[type=range]{width:100%;margin:10px 0 4px;accent-color:var(--navy);height:28px}
+:root[data-theme="dark"] .cgp-fuel input[type=range]{accent-color:var(--accent)}
+.cgp-fuel .qk{display:flex;gap:6px}
+.cgp-fuel .qk button{flex:1;min-height:34px;border:1px solid var(--line);border-radius:8px;font:700 12.5px var(--body);background:var(--field);color:var(--ink);cursor:pointer;padding:0 4px}
+.cgp-fuel .qk button[hidden]{display:none}
+.cgp-aux{margin-top:10px;font:600 13px var(--body);color:var(--ink);display:flex;flex-direction:column;gap:8px}
+.cgp-aux label{display:flex;align-items:center;gap:8px}
+.cgp-aux .unit-in{max-width:140px}
+#cgChart{display:block;width:100%;height:auto}
+.cgp-leg{display:flex;gap:14px;flex-wrap:wrap;font:600 12px var(--body);color:var(--muted);margin-top:8px}
+.cgp-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.cgp-leg i.z{border:2px solid var(--ink);background:var(--card)}.cgp-leg i.t{background:var(--ink)}.cgp-leg i.l{background:var(--yellow)}
+.cgp-note{font:500 12px/1.4 var(--body);color:var(--muted);margin-top:6px}
+.cgp-note:empty{display:none}
+.cgp-live{background:var(--navy);color:#fff;border-radius:var(--r);padding:14px}
+.cgp-live .h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.cgp-live .k{font:700 10.5px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--on-navy-dim)}
+.cgp-live .big{font:300 34px/1 var(--body);margin-top:4px}.cgp-live .big small{font:600 14px var(--body);color:var(--on-navy-dim);margin-left:4px}
+.cgp-live .cgpill{align-self:flex-start;line-height:1.2;font:800 12px var(--body);padding:6px 10px;border-radius:999px;background:#2DD4A8;color:#06302A;white-space:nowrap}
+.cgp-live .cgpill.bad{background:var(--red-on-navy);color:#3a0606}
+.cgp-live .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.15);margin:12px 0 4px;overflow:hidden}
+.cgp-live .bar i{display:block;height:100%;background:var(--yellow);width:0}
+.cgp-live .bar i.bad{background:var(--red-on-navy)}
+.cgp-live .cap{font:500 12px var(--body);color:var(--on-navy-dim)}
+.cgp-live .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.15)}
+.cgp-live .g3 .v{font:600 16px var(--body);margin-top:3px}.cgp-live .g3 .v small{font:500 11.5px var(--body);color:var(--on-navy-dim);display:block;margin-top:1px}
+.cgp-live .why{margin-top:10px;font:600 13px/1.4 var(--body);color:#FFD2D2}
+.cgp-live .use{margin-top:12px;width:100%;height:48px;border-radius:8px;background:#fff;color:#0B1E4F;font:800 15px var(--body);border:0;cursor:pointer}
+.cgp-live .use:disabled{opacity:.5;cursor:default}
+.cgp-live .use.done{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.cgp-det summary{font:700 13px var(--body);color:var(--muted);cursor:pointer}
+.cgp-det table{width:100%;border-collapse:collapse;margin-top:8px;font:500 13px var(--body);font-variant-numeric:tabular-nums}
+.cgp-det td,.cgp-det th{padding:6px 4px;border-top:1px solid var(--line);text-align:right}
+.cgp-det td:first-child,.cgp-det th:first-child{text-align:left}
+.cgp-det th{font:700 10.5px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cgp-det tr.t td{font-weight:800}
+.cgp-src{font:500 12px/1.4 var(--body);color:var(--muted);margin-top:8px}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1006,6 +1070,7 @@ body[data-view="fiche"] .fiche{margin-top:0}
         <label class="f"><span class="lbl">Masse au décollage</span>
           <span class="unit-in"><input id="depTow" class="inp" type="number" inputmode="numeric"/><span class="u">kg</span></span>
           <span id="depTowWarn" class="field-warn">Hors de la plage du manuel</span>
+          <button type="button" class="cg-link" id="cgFromAc">Calculer avec le centrage →</button>
         </label>
         <input id="safety" type="hidden" value="30"/>
         <div class="f spats" id="spatsWrap"><span class="lbl">Carénages de roues</span>
@@ -1370,6 +1435,44 @@ body[data-view="fiche"] .fiche{margin-top:0}
   </div><!-- /flow -->
 
   <!-- FICHE DU VOL -->
+  <section class="cgp" id="cgPane" aria-label="Masse et centrage">
+    <div class="cgp-none" id="cgNone" hidden></div>
+    <div id="cgMain">
+    <div class="cgp-card">
+      <div class="cgp-bt"><i>1</i>À bord</div>
+      <div class="cgp-pes"><span>Avion vide <b id="cgE">—</b> · bras <b id="cgA">—</b></span><span>Pesée du <b id="cgD">—</b></span></div>
+      <div id="cgRows"></div>
+      <div class="cgp-fuel">
+        <div class="hd"><div><b>Carburant à bord</b> <span id="cgFCap"></span></div><div class="val"><span id="cgFL">0</span><small> L · <span id="cgFKg">0</span> kg</small></div></div>
+        <input type="range" id="cgFuel" min="0" max="110" step="1" value="110" aria-label="Carburant à bord en litres">
+        <div class="qk"><button type="button" data-f="carbu" title="Carburant de l’onglet Carburant">Carbu</button><button type="button" data-f="half">½</button><button type="button" data-f="max">Max</button><button type="button" data-f="full">Plein</button></div>
+        <div class="cgp-aux" id="cgAuxWrap" hidden><label><input type="checkbox" id="cgAux"><span>Réservoir supplémentaire (bras <span id="cgAuxArm"></span> m)</span></label>
+          <div class="unit-in" id="cgAuxIn" hidden><input id="cgAuxL" class="inp" type="number" inputmode="numeric" min="0" value="0"/><span class="u">L</span></div></div>
+      </div>
+    </div>
+    <div class="cgp-card">
+      <div class="cgp-bt"><i>2</i>Enveloppe de centrage</div>
+      <svg id="cgChart" viewBox="0 0 360 280" role="img" aria-label="Enveloppe de centrage et points de chargement"></svg>
+      <div class="cgp-leg"><span><i class="z"></i>Sans carburant</span><span><i class="t"></i>Décollage</span><span id="cgLegL"><i class="l"></i>Atterrissage</span></div>
+      <div class="cgp-note" id="cgTripNote"></div>
+    </div>
+    <div class="cgp-live" id="cgLive">
+      <div class="h"><div><div class="k">Masse au décollage</div><div class="big"><span id="cgTow">—</span><small>kg / <span id="cgMtow">—</span></small></div></div><span class="cgpill" id="cgPill">—</span></div>
+      <div class="bar"><i id="cgBar"></i></div>
+      <div class="cap" id="cgCap">—</div>
+      <div class="g3">
+        <div><div class="k">Centrage</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
+        <div><div class="k">Sans carbu</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
+        <div><div class="k">Atterrissage</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
+      </div>
+      <div class="why" id="cgWhy" hidden></div>
+      <button type="button" class="use" id="cgUse">—</button>
+    </div>
+    <details class="cgp-card cgp-det"><summary>Détail du calcul</summary><table id="cgTbl"></table>
+      <p class="cgp-src" id="cgSrc"></p></details>
+    </div>
+  </section>
+
   <section class="fiche" id="fiche" aria-labelledby="ficheTitle">
     <div class="fiche-hd">
       <h2 class="h2" id="ficheTitle">Fiche du vol</h2>
@@ -1433,7 +1536,8 @@ body[data-view="fiche"] .fiche{margin-top:0}
 
 <!-- BARRE D'ONGLETS (style Companion) -->
 <nav class="tabbar" id="tabbar" aria-label="Étapes">
-  <button type="button" data-tab="ac"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 21l1.5-6-7-3V9.5l7 1.5V5a1.5 1.5 0 0 1 3 0v6l7-1.5V12l-7 3 1.5 6-3-1.5z"/></svg><span>Avion</span></button>
+  <button type="button" data-tab="ac"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><span>Avion</span></button>
+  <button type="button" data-tab="cg"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M7 21h10"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/></svg><span>Centrage</span></button>
   <button type="button" data-tab="dep"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M5 15l14-8"/><path d="M14 7h5v5"/></svg><span>Départ</span></button>
   <button type="button" data-tab="arr"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M5 7l14 8"/><path d="M14 15h5v-5"/></svg><span>Arrivée</span></button>
   <button type="button" data-tab="fuel"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v15"/><path d="M3 20h13"/><path d="M15 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M7 8h5"/></svg><span>Carburant</span></button>
@@ -5766,6 +5870,7 @@ if ('serviceWorker' in navigator) {
 
   function openStepFn(s, scroll) {
     if (!STEPS.includes(s)) return;
+    cgOn = false;
     if (!inScope(s)) { scope[s] = true; saveScope(); applyScope(); }
     openStep = s;
     renderSteps();
@@ -5783,13 +5888,15 @@ if ('serviceWorker' in navigator) {
   }
 
   /* ── Onglets et bandeau du vol (style Companion) ── */
-  const TABS = ['ac', 'dep', 'arr', 'fuel', 'fiche'];
+  const TABS = ['ac', 'cg', 'dep', 'arr', 'fuel', 'fiche'];
+  var cgOn = false;
   function renderTabs() {
-    const view = openStep || 'fiche';
+    const view = cgOn ? 'cg' : (openStep || 'fiche');
     document.body.dataset.view = view;
     document.querySelectorAll('#tabbar [data-tab]').forEach(b => {
       const t = b.dataset.tab;
-      b.hidden = t !== 'fiche' && !inScope(t);
+      b.hidden = t !== 'fiche' && t !== 'cg' && !inScope(t);
+      if (t === 'cg') { const st = window.__cgState ? window.__cgState() : null; b.classList.toggle('is-on', view === 'cg'); b.classList.toggle('is-done', st === 'ok'); b.classList.toggle('is-bad', st === 'bad'); return; }
       b.classList.toggle('is-on', t === view);
       const bad = t !== 'fiche' && t !== 'ac' && validated[t] && stepEl(t).classList.contains('is-bad');
       b.classList.toggle('is-done', t !== 'fiche' && !!validated[t] && !bad);
@@ -5798,10 +5905,211 @@ if ('serviceWorker' in navigator) {
   }
   function goTab(t) {
     if (!TABS.includes(t)) return;
+    if (t === 'cg') { cgOn = true; renderTabs(); try { window.__cgRender && window.__cgRender(true); } catch (e) {} scrollToEl(); return; }
+    cgOn = false;
     if (t === 'fiche') { openStep = null; renderSteps(); updateUI(); scrollToEl(); return; }
     openStepFn(t);
   }
   window.__goTab = goTab;
+
+  /* ═══════════ Masse et centrage ═══════════
+     Pesées : dernier rapport de pesée de chaque avion. Limites : manuel de vol.
+     unus = litres inutilisables déjà comptés dans la masse à vide de la pesée. */
+  const CG_DATA = {
+    'F-GCAL': { type: 'DR400/120', date: '24/07/2015', empty: 570, moment: 194.63, mtow: 900, cap: 110, unus: 10,
+                front: [[0.205, 750], [0.428, 900]], aft: 0.564, bag: 40, aux: 1.61,
+                src: 'Pesée Betrancourt Aerospace du 24/07/2015 (essence inutilisable comprise). Limites : manuel de vol DR400/120, § 2.2.' },
+    'F-BXEK': { type: 'DR400/120', date: '26/03/2018', empty: 577, moment: 164.445, mtow: 900, cap: 110, unus: 10,
+                front: [[0.205, 750], [0.428, 900]], aft: 0.564, bag: 40, aux: 1.61,
+                src: 'Pesée VF Aéro Maintenance du 26/03/2018 (essence non consommable comprise). Limites : manuel de vol DR400/120, § 2.2.' },
+    'F-BTBS': { type: 'DR300/120', date: '23/10/2013', empty: 549, moment: 180.07, mtow: 865, cap: 110, unus: 0,
+                front: [[0.239, 700], [0.427, 865]], aft: 0.564, bag: 40, aux: 1.65,
+                src: 'Pesée CP Aéro du 23/10/2013. Limites : manuel de vol DR300-120, § 2.2 et centrogramme.' },
+    'F-BTBJ': { type: 'DR315', date: '17/05/2018', empty: 523.2, moment: 151.73, mtow: 865, cap: 110, unus: 0,
+                front: [[0.239, 700], [0.427, 865]], aft: 0.564, bag: 40, aux: 1.65,
+                src: 'Pesée du 17/05/2018 (Cosne-sur-Loire). Limites : manuel de vol DR315, § e.' }
+  };
+  const CG_ARM = { pil: 0.41, cop: 0.41, ar: 1.19, bag: 1.90, fuel: 1.12 };
+  const CG_ROWS = [['pil', 'Pilote'], ['cop', 'Passager avant'], ['ar', 'Passagers arrière'], ['bag', 'Bagages']];
+  const CG_KEY = 'acbt-cg';
+  const cg = { pil: 80, cop: 0, ar: 0, bag: 0, fuel: null, aux: false, auxL: 0, ac: null, used: null };
+  try { const sv = JSON.parse(localStorage.getItem(CG_KEY) || 'null'); if (sv && +sv.pil > 0) cg.pil = +sv.pil; } catch (e) {}
+  const cgF = (n, d = 0) => (+n).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const cgAc = () => CG_DATA[val('aircraftSel')] || null;
+  function cgFrontAt(a, m) {
+    const p = a.front;
+    if (m <= p[0][1]) return p[0][0];
+    return p[0][0] + (p[1][0] - p[0][0]) * (Math.min(m, p[1][1]) - p[0][1]) / (p[1][1] - p[0][1]);
+  }
+  const cgIn = (a, p) => p[0] <= a.mtow + 1e-6 && p[1] >= cgFrontAt(a, p[0]) - 1e-6 && p[1] <= a.aft + 1e-6;
+  function cgCalc(a, L, auxL) {
+    const items = [['Avion vide (pesée du ' + a.date + ')', a.empty, a.moment / a.empty]];
+    CG_ROWS.forEach(([k, l]) => items.push([l, Math.max(0, +cg[k] || 0), CG_ARM[k]]));
+    const zm = items.reduce((s, i) => s + i[1], 0), zmo = items.reduce((s, i) => s + i[1] * i[2], 0);
+    const fk = Math.max(0, L - a.unus) * 0.72, ak = Math.max(0, auxL || 0) * 0.72;
+    const m = zm + fk + ak, mo = zmo + fk * CG_ARM.fuel + ak * a.aux;
+    return { items, fk, ak, zf: [zm, zmo / zm], to: [m, mo / m] };
+  }
+  // Carburant consommé jusqu'à l'atterrissage : mise en route + trip fuel aller (onglet Carbu)
+  function cgBurn() {
+    try {
+      if (!scope.fuel || typeof fuelCompute !== 'function') return null;
+      const f = fuelCompute();
+      const p = f.phases || [];
+      const st = p.find(x => x.ph === 'Mise en route'), tr = p.find(x => x.ph === 'Trip fuel');
+      if (!tr || !(tr.min > 0)) return null;
+      return (st ? st.L : 0) + tr.L;
+    } catch (e) { return null; }
+  }
+  function cgCarbuL(a) {
+    try { if (typeof fuelMode !== 'undefined' && fuelMode) { const v = parseFloat(val('fuelCap')); if (v >= 0) return Math.min(a.cap, Math.round(v)); } } catch (e) {}
+    return null;
+  }
+  function cgMaxFuel(a) {
+    let best = -1;
+    for (let L = 0; L <= a.cap; L++) { const c = cgCalc(a, L, cg.aux ? cg.auxL : 0); if (cgIn(a, c.to) && cgIn(a, c.zf)) best = L; }
+    return best;
+  }
+  function cgEval() {
+    const a = cgAc();
+    if (!a) return null;
+    const L = cg.fuel, aux = cg.aux ? Math.max(0, +cg.auxL || 0) : 0;
+    const c = cgCalc(a, L, aux), burn = cgBurn();
+    const ld = burn != null ? cgCalc(a, Math.max(0, L - burn), aux) : null;
+    const bagBad = cg.bag > a.bag;
+    const okT = cgIn(a, c.to), okZ = cgIn(a, c.zf), okL = !ld || cgIn(a, ld.to);
+    return { a, L, aux, c, ld, burn, bagBad, okT, okZ, okL, ok: okT && okZ && okL && !bagBad };
+  }
+  window.__cgState = () => { try { const e = cgEval(); if (!e || cg.used == null) return null; return e.ok ? 'ok' : 'bad'; } catch (x) { return null; } };
+  function cgSave() { try { localStorage.setItem(CG_KEY, JSON.stringify({ pil: cg.pil })); } catch (e) {} }
+
+  $id('cgRows').innerHTML = CG_ROWS.map(([k, l]) =>
+    '<div class="cgp-row"><div class="rl"><b>' + l + '</b><span id="cgS_' + k + '">bras ' + cgF(CG_ARM[k], 2) + ' m</span></div>' +
+    '<div class="cgp-stp"><button type="button" data-k="' + k + '" data-d="-5" aria-label="' + l + ' moins 5 kg">−</button>' +
+    '<input id="cgI_' + k + '" type="number" inputmode="numeric" min="0" aria-label="' + l + ' en kg"><button type="button" data-k="' + k + '" data-d="5" aria-label="' + l + ' plus 5 kg">+</button></div></div>').join('');
+  $id('cgRows').addEventListener('click', e => {
+    const b = e.target.closest('button[data-k]'); if (!b) return;
+    const k = b.dataset.k; cg[k] = Math.max(0, (+cg[k] || 0) + +b.dataset.d);
+    $id('cgI_' + k).value = cg[k]; if (k === 'pil') cgSave(); cgRender();
+  });
+  $id('cgRows').addEventListener('input', e => {
+    const k = (e.target.id || '').replace('cgI_', ''); if (!(k in cg)) return;
+    cg[k] = Math.max(0, +e.target.value || 0); if (k === 'pil') cgSave(); cgRender();
+  });
+  $id('cgFuel').addEventListener('input', e => { cg.fuel = +e.target.value; cgRender(); });
+  $id('cgAux').addEventListener('change', e => { cg.aux = e.target.checked; cgRender(); });
+  $id('cgAuxL').addEventListener('input', e => { cg.auxL = Math.min(50, Math.max(0, +e.target.value || 0)); cgRender(); });
+  document.querySelector('.cgp-fuel .qk').addEventListener('click', e => {
+    const b = e.target.closest('button[data-f]'); const a = cgAc(); if (!b || !a) return;
+    const f = b.dataset.f;
+    if (f === 'full') cg.fuel = a.cap;
+    else if (f === 'half') cg.fuel = Math.round(a.cap / 2);
+    else if (f === 'carbu') { const v = cgCarbuL(a); if (v != null) cg.fuel = v; }
+    else if (f === 'max') { const m = cgMaxFuel(a); cg.fuel = Math.max(0, m); }
+    cgRender();
+  });
+  $id('cgUse').addEventListener('click', () => {
+    const e = cgEval(); if (!e || !e.ok) return;
+    const m = Math.round(e.c.to[0]);
+    const inp = $id('depTow'); inp.value = m;
+    inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true }));
+    cg.used = m;
+    try { if (typeof toast === 'function') toast('Masse au décollage : ' + m + ' kg'); } catch (x) {}
+    cgRender(); try { renderTabs(); } catch (x) {}
+  });
+  $id('cgFromAc').addEventListener('click', () => goTab('cg'));
+  document.addEventListener('change', e => { if (e.target && e.target.id === 'aircraftSel') { cg.fuel = null; cg.used = null; cg.aux = false; cg.auxL = 0; } });
+
+  function cgRender(fromTab) {
+    const a = cgAc(), immat = val('aircraftSel');
+    $id('cgNone').hidden = !!a; $id('cgMain').hidden = !a;
+    if (!a) {
+      $id('cgNone').innerHTML = immat
+        ? '<b>Centrage indisponible pour ' + immat + '.</b><br>Il manque le dernier rapport de pesée et les limites du manuel de vol de cet avion.'
+        : '<b>Choisis d\'abord un avion</b> dans l\'onglet Avion.';
+      return;
+    }
+    if (cg.fuel == null) { const v = cgCarbuL(a); cg.fuel = v != null ? v : a.cap; }
+    if (cg.fuel > a.cap) cg.fuel = a.cap;
+    CG_ROWS.forEach(([k]) => { const i = $id('cgI_' + k); if (document.activeElement !== i) i.value = cg[k] || 0; });
+    const e = cgEval(), c = e.c, ld = e.ld;
+    $id('cgE').textContent = cgF(a.empty, a.empty % 1 ? 1 : 0) + ' kg';
+    $id('cgA').textContent = cgF(a.moment / a.empty, 3) + ' m';
+    $id('cgD').textContent = a.date;
+    const fr = $id('cgFuel'); fr.max = a.cap; fr.value = cg.fuel;
+    $id('cgFL').textContent = cg.fuel; $id('cgFKg').textContent = cgF(cg.fuel * 0.72);
+    $id('cgFCap').textContent = '· max ' + a.cap + ' L';
+    document.querySelector('.cgp-fuel [data-f="carbu"]').hidden = cgCarbuL(a) == null;
+    $id('cgAuxWrap').hidden = false; $id('cgAuxArm').textContent = cgF(a.aux, 2);
+    $id('cgAux').checked = cg.aux; $id('cgAuxIn').hidden = !cg.aux;
+    const sb = $id('cgS_bag');
+    sb.textContent = e.bagBad ? 'max ' + a.bag + ' kg dépassé' : 'bras 1,90 m · max ' + a.bag + ' kg';
+    sb.className = e.bagBad ? 'bad' : '';
+    const m = c.to[0], marg = a.mtow - m;
+    $id('cgTow').textContent = cgF(m); $id('cgMtow').textContent = a.mtow;
+    const bar = $id('cgBar'); bar.style.width = Math.min(100, m / a.mtow * 100) + '%'; bar.className = marg < 0 ? 'bad' : '';
+    const mf = cgMaxFuel(a);
+    $id('cgCap').textContent = marg >= 0
+      ? 'Reste ' + cgF(marg) + ' kg avant la masse max' + (mf >= 0 ? ' · ' + mf + ' L de carburant possibles' : '')
+      : cgF(-marg) + ' kg au-dessus de la masse max';
+    $id('cgCg').textContent = cgF(c.to[1], 3) + ' m';
+    $id('cgCgL').textContent = 'limites ' + cgF(cgFrontAt(a, Math.min(m, a.mtow)), 3) + ' – ' + cgF(a.aft, 3);
+    $id('cgZf').textContent = cgF(c.zf[0]) + ' kg'; $id('cgZfC').textContent = cgF(c.zf[1], 3) + ' m';
+    $id('cgLd').textContent = ld ? cgF(ld.to[0]) + ' kg' : '—';
+    $id('cgLdC').textContent = ld ? cgF(ld.to[1], 3) + ' m' : 'temps de vol ?';
+    $id('cgLegL').hidden = !ld;
+    $id('cgTripNote').textContent = ld
+      ? 'Atterrissage : ' + cgF(e.burn, 1) + ' L consommés (mise en route + trip fuel de l\'onglet Carbu).'
+      : (scope.fuel ? 'Renseigne le temps de vol dans l\'onglet Carbu pour voir le point d\'atterrissage.' : '');
+    const pill = $id('cgPill');
+    pill.textContent = e.ok ? '✓ Dans les limites' : '✕ Hors limites'; pill.className = 'cgpill' + (e.ok ? '' : ' bad');
+    const w = [];
+    if (m > a.mtow) w.push('Masse au décollage trop élevée de ' + cgF(m - a.mtow) + ' kg : enlève du carburant, des bagages ou un passager.');
+    else if (!e.okT && c.to[1] < cgFrontAt(a, m)) w.push('Centrage trop avant : déplace de la masse vers l\'arrière (bagages, banquette).');
+    else if (!e.okT) w.push('Centrage trop arrière : allège l\'arrière (bagages, banquette).');
+    if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'Sans carburant, le centrage passe trop arrière : chargement à revoir.' : 'Sans carburant, le centrage passe trop avant : chargement à revoir.');
+    if (e.okT && e.okZ && !e.okL) w.push('À l\'atterrissage, le centrage sort des limites.');
+    if (e.bagBad) w.push('Bagages limités à ' + a.bag + ' kg.');
+    $id('cgWhy').hidden = !w.length; $id('cgWhy').textContent = w.join(' ');
+    const use = $id('cgUse'), rm = Math.round(m), cur = +val('depTow') || 0;
+    use.disabled = !e.ok;
+    use.classList.toggle('done', e.ok && cur === rm);
+    use.textContent = !e.ok ? 'Corrige le chargement' : (cur === rm ? '✓ ' + rm + ' kg utilisés pour le décollage' : 'Utiliser ' + rm + ' kg pour le décollage');
+    $id('cgTbl').innerHTML = '<tr><th>Poste</th><th>kg</th><th>Bras</th><th>Moment</th></tr>' +
+      c.items.map(i => '<tr><td>' + i[0] + '</td><td>' + cgF(i[1], 1) + '</td><td>' + cgF(i[2], 3) + '</td><td>' + cgF(i[1] * i[2], 1) + '</td></tr>').join('') +
+      '<tr><td>Carburant (' + cg.fuel + ' L' + (a.unus ? ' − ' + a.unus + ' L déjà pesés' : '') + ')</td><td>' + cgF(c.fk, 1) + '</td><td>' + cgF(CG_ARM.fuel, 3) + '</td><td>' + cgF(c.fk * CG_ARM.fuel, 1) + '</td></tr>' +
+      (e.aux ? '<tr><td>Réservoir supplémentaire (' + e.aux + ' L)</td><td>' + cgF(c.ak, 1) + '</td><td>' + cgF(a.aux, 3) + '</td><td>' + cgF(c.ak * a.aux, 1) + '</td></tr>' : '') +
+      '<tr class="t"><td>Total</td><td>' + cgF(m, 1) + '</td><td>' + cgF(c.to[1], 3) + '</td><td>' + cgF(m * c.to[1], 1) + '</td></tr>';
+    $id('cgSrc').textContent = a.src + ' Essence 0,72 kg/L.';
+    cgDraw(e);
+    if (!fromTab) { try { renderTabs(); } catch (x) {} }
+  }
+  window.__cgRender = cgRender;
+
+  function cgDraw(e) {
+    const a = e.a, c = e.c, ld = e.ld;
+    const W = 360, H = 280, L = 44, R = 12, T = 14, B = 34, x0 = 0.18, x1 = 0.60;
+    const pts = [c.zf, c.to].concat(ld ? [ld.to] : []);
+    const lo = Math.min(a.empty, ...pts.map(p => p[0])), hi = Math.max(a.mtow, ...pts.map(p => p[0]));
+    const y0 = Math.floor((lo - 30) / 50) * 50, y1 = Math.ceil((hi + 30) / 50) * 50;
+    const X = x => L + (Math.min(Math.max(x, x0 - 0.02), x1 + 0.02) - x0) / (x1 - x0) * (W - L - R), Y = y => T + (y1 - y) / (y1 - y0) * (H - T - B);
+    const tx = (x, y, t, an, extra) => '<text x="' + x + '" y="' + y + '" font-size="10.5" text-anchor="' + an + '" fill="var(--muted)" font-family="Manrope,sans-serif" font-weight="600"' + (extra || '') + '>' + t + '</text>';
+    let s = '';
+    for (let i = 0; i <= 8; i++) { const x = 0.20 + i * 0.05; s += '<line x1="' + X(x) + '" x2="' + X(x) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="var(--line)"/>' + tx(X(x), H - B + 16, cgF(x, 2), 'middle'); }
+    for (let y = y0; y <= y1; y += 50) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(y) + '" y2="' + Y(y) + '" stroke="var(--line)"/>' + tx(L - 6, Y(y) + 4, y, 'end');
+    s += tx(W - R, H - 4, 'bras de levier (m)', 'end', ' font-size="10"');
+    const yb = Math.max(y0, a.empty - 10), p = a.front;
+    const poly = [[p[0][0], yb], [p[0][0], p[0][1]], [p[1][0], p[1][1]], [a.aft, a.mtow], [a.aft, yb]];
+    s += '<polygon points="' + poly.map(q => X(q[0]) + ',' + Y(q[1])).join(' ') + '" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>';
+    s += '<line x1="' + X(x0) + '" x2="' + X(x1) + '" y1="' + Y(a.mtow) + '" y2="' + Y(a.mtow) + '" stroke="var(--err)" stroke-dasharray="4 4" opacity=".6"/>';
+    s += '<text x="' + (X(x0) + 4) + '" y="' + (Y(a.mtow) - 5) + '" font-size="10" fill="var(--err)" font-family="Manrope,sans-serif" font-weight="700">max ' + a.mtow + ' kg</text>';
+    const col = e.ok ? 'var(--ink)' : 'var(--err)';
+    s += '<polyline points="' + [c.zf].concat(ld ? [ld.to] : []).concat([c.to]).map(q => X(q[1]) + ',' + Y(q[0])).join(' ') + '" fill="none" stroke="' + col + '" stroke-width="2" opacity=".45"/>';
+    s += '<circle cx="' + X(c.zf[1]) + '" cy="' + Y(c.zf[0]) + '" r="6" fill="var(--card)" stroke="' + col + '" stroke-width="2.5"/>';
+    if (ld) s += '<circle cx="' + X(ld.to[1]) + '" cy="' + Y(ld.to[0]) + '" r="6" fill="var(--yellow)" stroke="var(--card)" stroke-width="2"/>';
+    s += '<circle cx="' + X(c.to[1]) + '" cy="' + Y(c.to[0]) + '" r="8" fill="' + col + '" stroke="var(--card)" stroke-width="2.5"/>';
+    $id('cgChart').innerHTML = s;
+  }
   $id('tabbar').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) goTab(b.dataset.tab); });
   $id('band').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) goTab(b.dataset.tab); });
   function renderBand() {
