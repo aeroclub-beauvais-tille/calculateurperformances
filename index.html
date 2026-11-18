@@ -1059,6 +1059,11 @@ body.sheet-open{overflow:hidden}
 #fuelOnboardTg:not(:has(.is-selected)){box-shadow:inset 0 0 0 1.5px var(--accent)}
 .res-tg[hidden],.res-fixed[hidden]{display:none!important}
 .res-fixed{font:800 16px var(--body);color:var(--ink);white-space:nowrap}
+#stepFuel .spats{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;grid-column:auto;text-align:left}
+#stepFuel .spats .lbl{font:600 13px var(--body);color:var(--muted);text-transform:none;letter-spacing:0;margin:0}
+#stepFuel .spats .toggle-group{flex:0 0 190px;flex-direction:row;width:190px}
+#stepFuel .spats .note{display:none}
+#stepFuel .night-row[hidden]{display:none!important}
 #fuelLive{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:5}
 #fuelLive:has(details[open]){position:static}
 </style>
@@ -6230,7 +6235,7 @@ if ('serviceWorker' in navigator) {
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$id('acSheet').hidden) acSheetClose(); });
 
   // Carénages : réglage déplacé dans l'onglet Carburant (ils ne jouent que sur la consommation)
-  try { const sw = $id('spatsWrap'), al = $id('fuelAcFields'); if (sw && al) al.after(sw); } catch (e) {}  // carénages : avec la consommation, sous « Modifier »
+  try { const sw = $id('spatsWrap'), al = document.querySelector('#stepFuel .ac-line'); if (sw && al) al.before(sw); } catch (e) {}  // carénages : visibles, juste au-dessus de la consommation qu'ils font varier
 
   /* ── Fiche : fiches enregistrées sous la fiche du vol ── */
   function renderFicheHist() { try { window.__fhRender && window.__fhRender(); } catch (e) {} }
@@ -6842,10 +6847,9 @@ if ('serviceWorker' in navigator) {
     const conso = val('fuelConso'), un = val('fuelUnusable');
     const fac = window.__spatsFuelFactor();
     $id('fuelAcSumTxt').textContent = conso
-      ? String(conso).replace('.', ',') + ' L/h' + (fac > 1 ? ' + 3 %' : '') + ' · ' + (un || '0') + ' L inutilisable' + (showSpats ? (withSpats ? ' · avec carénages' : ' · sans carénages') : '')
+      ? String(conso).replace('.', ',') + ' L/h' + (fac > 1 ? ' + 3 %' : '') + ' · ' + (un || '0') + ' L inutilisable'
       : 'Consommation à renseigner';
     $id('fuelAcFields').hidden = !(fuelAcOpen || !conso);
-    $id('spatsWrap').hidden = !showSpats || $id('fuelAcFields').hidden;
     $id('fuelAcEdit').textContent = fuelAcOpen ? 'Fermer' : 'Modifier';
     renderFuel();
     if (!fuelMode) {
@@ -7155,6 +7159,8 @@ if ('serviceWorker' in navigator) {
     $id('fuelNight').checked = night;
     $id('fuelNight').disabled = autoNight;
     $id('fuelNightSub').textContent = autoNight ? 'détecté : vol après la nuit aéronautique' : '';
+    // Avions ACBT : 45 min de réserve de toute façon, l'interrupteur « VFR de nuit » ne changerait rien
+    document.querySelector('#stepFuel .night-row').hidden = acbt;
     const why = acbt ? 'acbt' : night ? 'night' : null;
     if (why) {
       if (val('fuelReserve') !== '45') { $id('fuelReserve').value = '45'; computeFuel(); }
