@@ -53,10 +53,25 @@ async function sha256Hex(str) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+/* Sites autorisés à envoyer les fiches : Perfs elle-même et l'appli « Espace membres » du club,
+   qui intègre Perfs (aujourd'hui sur GitHub Pages, demain sur le domaine du club). */
+const ORIGINES = ['https://hugoflying.github.io', 'https://acbt60.fr', 'https://www.acbt60.fr'];
 function sameOrigin(request) {
   const origin = request.headers.get('Origin');
   if (!origin) return true;
+  if (ORIGINES.includes(origin)) return true;
   try { return new URL(origin).host === new URL(request.url).host; } catch (e) { return false; }
+}
+function corsHeaders(request) {
+  const origin = request.headers.get('Origin');
+  if (!origin || !ORIGINES.includes(origin)) return null;
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin'
+  };
 }
 
 function checkPassword(request, env) {
@@ -73,7 +88,7 @@ const verdict = s => (s && s.result) ? s.result.verdict : null;
 const str = (v, n) => (typeof v === 'string' ? v : '').slice(0, n);
 
 /* ── Réception d'une fiche ── */
-export async function onRequestPost({ request, env }) {
+async function recevoir({ request, env }) {
   if (!env.DB) return json({ ok: false, error: 'Base D1 non reliée (liaison DB manquante).' }, 503);
   if (!sameOrigin(request)) return json({ ok: false, error: 'Origine refusée.' }, 403);
   const len = +(request.headers.get('Content-Length') || 0);
@@ -111,7 +126,7 @@ export async function onRequestPost({ request, env }) {
 }
 
 /* ── Consultation (page archives.html) ── */
-export async function onRequestGet({ request, env }) {
+async function consulter({ request, env }) {
   if (!env.DB) return json({ ok: false, error: 'Base D1 non reliée (liaison DB manquante).' }, 503);
   if (!env.ARCHIVE_PASSWORD) return json({ ok: false, error: 'Mot de passe des archives non défini (ARCHIVE_PASSWORD).' }, 503);
   if (!checkPassword(request, env)) return json({ ok: false, error: 'Mot de passe incorrect.' }, 401);
@@ -144,7 +159,7 @@ export async function onRequestGet({ request, env }) {
 }
 
 /* ── Suppression (page archives.html, protégée par le mot de passe) ── */
-export async function onRequestDelete({ request, env }) {
+async function supprimer({ request, env }) {
   if (!env.DB) return json({ ok: false, error: 'Base D1 non reliée (liaison DB manquante).' }, 503);
   if (!env.ARCHIVE_PASSWORD) return json({ ok: false, error: 'Mot de passe des archives non défini (ARCHIVE_PASSWORD).' }, 503);
   if (!checkPassword(request, env)) return json({ ok: false, error: 'Mot de passe incorrect.' }, 401);
@@ -153,4 +168,16 @@ export async function onRequestDelete({ request, env }) {
   await ensureTable(env.DB);
   const r = await env.DB.prepare('DELETE FROM fiches WHERE id = ?').bind(id).run();
   return json({ ok: true, deleted: (r.meta && r.meta.changes) || 0 });
+}
+
+/* ── Aiguillage + autorisation des sites du club (CORS) ── */
+const ROUTES = { POST: recevoir, GET: consulter, DELETE: supprimer };
+export async function onRequest(context) {
+  const { request } = context;
+  const cors = corsHeaders(request);
+  if (request.method === 'OPTIONS') return new Response(null, { status: cors ? 204 : 403, headers: cors || {} });
+  const route = ROUTES[request.method];
+  const res = route ? await route(context) : json({ ok: false, error: 'Méthode non autorisée.' }, 405);
+  if (cors) for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
+  return res;
 }
