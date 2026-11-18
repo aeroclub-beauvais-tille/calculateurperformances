@@ -1446,8 +1446,6 @@ body[data-view="cg"] .fiche,body[data-view="cg"] .scope{display:none}
         <div class="hd"><div><b>Carburant à bord</b> <span id="cgFCap"></span></div><div class="val"><span id="cgFL">0</span><small> L · <span id="cgFKg">0</span> kg</small></div></div>
         <input type="range" id="cgFuel" min="0" max="110" step="1" value="110" aria-label="Carburant à bord en litres">
         <div class="qk"><button type="button" data-f="carbu" title="Carburant de l’onglet Carburant">Carbu</button><button type="button" data-f="half">½</button><button type="button" data-f="max">Max</button><button type="button" data-f="full">Plein</button></div>
-        <div class="cgp-aux" id="cgAuxWrap" hidden><label><input type="checkbox" id="cgAux"><span>Réservoir supplémentaire (bras <span id="cgAuxArm"></span> m)</span></label>
-          <div class="unit-in" id="cgAuxIn" hidden><input id="cgAuxL" class="inp" type="number" inputmode="numeric" min="0" value="0"/><span class="u">L</span></div></div>
       </div>
     </div>
     <div class="cgp-card">
@@ -5997,8 +5995,6 @@ if ('serviceWorker' in navigator) {
     cg[k] = Math.max(0, +e.target.value || 0); if (k === 'pil') cgSave(); cgRender();
   });
   $id('cgFuel').addEventListener('input', e => { cg.fuel = +e.target.value; cgRender(); });
-  $id('cgAux').addEventListener('change', e => { cg.aux = e.target.checked; cgRender(); });
-  $id('cgAuxL').addEventListener('input', e => { cg.auxL = Math.min(50, Math.max(0, +e.target.value || 0)); cgRender(); });
   document.querySelector('.cgp-fuel .qk').addEventListener('click', e => {
     const b = e.target.closest('button[data-f]'); const a = cgAc(); if (!b || !a) return;
     const f = b.dataset.f;
@@ -6040,8 +6036,6 @@ if ('serviceWorker' in navigator) {
     $id('cgFL').textContent = cg.fuel; $id('cgFKg').textContent = cgF(cg.fuel * 0.72);
     $id('cgFCap').textContent = '· max ' + a.cap + ' L';
     document.querySelector('.cgp-fuel [data-f="carbu"]').hidden = cgCarbuL(a) == null;
-    $id('cgAuxWrap').hidden = false; $id('cgAuxArm').textContent = cgF(a.aux, 2);
-    $id('cgAux').checked = cg.aux; $id('cgAuxIn').hidden = !cg.aux;
     const sb = $id('cgS_bag');
     sb.textContent = e.bagBad ? 'max ' + a.bag + ' kg dépassé' : 'bras 1,90 m · max ' + a.bag + ' kg';
     sb.className = e.bagBad ? 'bad' : '';
