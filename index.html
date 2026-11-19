@@ -1074,6 +1074,9 @@ body[data-view="pick"]{padding-bottom:24px}
 .xm-pm button{height:32px;border-radius:6px;background:var(--card);border:1px solid var(--line-strong);color:var(--muted);font:500 18px/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .xm-pm button:active{background:var(--field-3)}
 
+/* Un calcul par trajet : plus de retour sans avitaillement */
+#fuelRetourRow{display:none!important}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1510,7 +1513,7 @@ body[data-view="pick"]{padding-bottom:24px}
 
         <div class="blk">
           <div class="blk-h"><span class="bt"><i>2</i>Le vol</span></div>
-          <span class="sub">Temps de vol aller</span>
+          <span class="sub">Temps de vol</span>
           <div class="tstep" data-h="fuelCruiseH" data-m="fuelCruiseM" id="ts_go">
             <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
             <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-in"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></span></button>
@@ -7360,6 +7363,10 @@ if ('serviceWorker' in navigator) {
   });
   { const _cfX = window.computeFuel; window.computeFuel = function () { const x = _cfX.apply(this, arguments); try { xmPad(); } catch (e) {} return x; }; }
   xmPad();
+  // Un calcul par trajet : un éventuel retour (ancienne fiche reprise) est retiré avant chaque calcul
+  { const _cfOne = window.computeFuel; window.computeFuel = function () {
+      try { const rt = $id('fuelRoundtrip'); if (rt && rt.checked) { rt.checked = false; $id('fuelBackH').value = ''; $id('fuelBackM').value = ''; $id('fuelBackWrap').classList.remove('open'); $id('fuelRetourRow').classList.remove('is-on'); } } catch (e) {}
+      return _cfOne.apply(this, arguments); }; }
   /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
   function rsvPaint() {
     const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
@@ -7423,7 +7430,7 @@ if ('serviceWorker' in navigator) {
       if (fuelMode && (fuelMode !== 'used' || usedMin() > 0) && !fuelTrip()) {
         const v = $id('fuelVerdict');
         v.className = 'fuel-verdict is-neutral';
-        v.innerHTML = '<div class="fuel-verdict-title">Indique le temps de vol aller</div><div class="fuel-verdict-sub">Le bilan se calcule automatiquement.</div>';
+        v.innerHTML = '<div class="fuel-verdict-title">Indique le temps de vol</div><div class="fuel-verdict-sub">Le bilan se calcule automatiquement.</div>';
       }
       return;
     }
