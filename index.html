@@ -6207,7 +6207,7 @@ if ('serviceWorker' in navigator) {
   }
   const cgIn = (a, p) => p[0] <= a.mtow + 1e-6 && p[1] >= cgFrontAt(a, p[0]) - 1e-6 && p[1] <= a.aft + 1e-6;
   function cgCalc(a, L, auxL) {
-    const items = [[(a.date ? 'Avion vide (pesée du ' + a.date + ')' : 'Avion vide (fichier du club)') + (a.unus ? '<br><small>dont les ' + a.unus + ' L de carburant inutilisable</small>' : ''), a.empty, a.moment / a.empty]];
+    const items = [[(a.date ? 'Avion vide (pesée du ' + a.date + ')' : 'Avion vide (fichier du club)') + (a.unus ? '<small>avec les ' + a.unus + ' L inutilisables</small>' : ''), a.empty, a.moment / a.empty]];
     CG_ROWS.forEach(([k, l]) => items.push([l, Math.max(0, +cg[k] || 0), CG_ARM[k]]));
     const zm = items.reduce((s, i) => s + i[1], 0), zmo = items.reduce((s, i) => s + i[1] * i[2], 0);
     const fk = Math.max(0, L - a.unus) * 0.72, ak = Math.max(0, auxL || 0) * 0.72;
@@ -6324,7 +6324,7 @@ if ('serviceWorker' in navigator) {
     use.textContent = e.ok ? 'Continuer : Départ →' : 'Chargement à corriger';
     $id('cgTbl').innerHTML = '<tr><th>Poste</th><th>kg</th><th>Bras de levier</th><th>Moment</th></tr>' +
       c.items.map(i => '<tr><td>' + i[0] + '</td><td>' + cgF(i[1], 1) + '</td><td>' + cgF(i[2], 3) + '</td><td>' + cgF(i[1] * i[2], 1) + '</td></tr>').join('') +
-      '<tr><td>Carburant (' + cg.fuel + ' L à bord)' + (a.unus ? '<br><small>' + Math.max(0, cg.fuel - a.unus) + ' L ajoutés : les ' + a.unus + ' L inutilisables sont déjà dans la masse à vide</small>' : '') + '</td><td>' + cgF(c.fk, 1) + '</td><td>' + cgF(CG_ARM.fuel, 3) + '</td><td>' + cgF(c.fk * CG_ARM.fuel, 1) + '</td></tr>' +
+      '<tr><td>Carburant utilisable' + (a.unus ? '<small>' + cgF(Math.max(0, cg.fuel - a.unus)) + ' L sur ' + cg.fuel + ' L à bord</small>' : '<small>' + cg.fuel + ' L à bord</small>') + '</td><td>' + cgF(c.fk, 1) + '</td><td>' + cgF(CG_ARM.fuel, 3) + '</td><td>' + cgF(c.fk * CG_ARM.fuel, 1) + '</td></tr>' +
       (e.aux ? '<tr><td>Réservoir supplémentaire (' + e.aux + ' L)</td><td>' + cgF(c.ak, 1) + '</td><td>' + cgF(a.aux, 3) + '</td><td>' + cgF(c.ak * a.aux, 1) + '</td></tr>' : '') +
       '<tr class="t"><td>Total</td><td>' + cgF(m, 1) + '</td><td>' + cgF(c.to[1], 3) + '</td><td>' + cgF(m * c.to[1], 1) + '</td></tr>';
     $id('cgSrc').textContent = a.src + ' Essence 0,72 kg/L.';
