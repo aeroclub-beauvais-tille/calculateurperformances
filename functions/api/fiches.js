@@ -55,7 +55,7 @@ async function sha256Hex(str) {
 
 /* Sites autorisés à envoyer les fiches : Perfs elle-même et l'appli « Espace membres » du club,
    qui intègre Perfs (aujourd'hui sur GitHub Pages, demain sur le domaine du club). */
-const ORIGINES = ['https://hugoflying.github.io', 'https://acbt60.fr', 'https://www.acbt60.fr'];
+const ORIGINES = ['https://aeroclub-beauvais-tille.github.io', 'https://hugoflying.github.io', 'https://acbt60.fr', 'https://www.acbt60.fr'];
 function sameOrigin(request) {
   const origin = request.headers.get('Origin');
   if (!origin) return true;
