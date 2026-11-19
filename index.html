@@ -1178,6 +1178,49 @@ body[data-view="pick"]{padding-bottom:24px}
 #stepFuel .night-row[hidden]{display:none!important}
 #fuelLive{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:5}
 #fuelLive:has(details[open]){position:static}
+
+/* TAF : pastilles d'heure et périodes en lignes */
+.eta-hidden{display:none!important}
+.wxc-taf .taf-header{padding:0;border:0;background:none}
+.eta-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 1px 4px;scroll-behavior:smooth;align-items:stretch}
+.eta-strip::-webkit-scrollbar{display:none}
+.eta-day{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;padding:0 4px 0 6px;font:600 11px var(--body);color:var(--muted);white-space:nowrap;border-left:1px dashed var(--line-strong)}
+.eta-day:first-child{border-left:0;padding-left:0}
+.eta-day b{font:800 12px var(--body);color:var(--ink)}
+.eta-chip{flex:0 0 auto;width:56px;border:1px solid var(--line-strong);border-radius:8px;background:var(--card);color:var(--ink);padding:7px 0 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font-family:var(--body)}
+.eta-chip b{font:800 15px var(--body)}
+.eta-chip small{font:600 11px var(--body);color:var(--muted)}
+.eta-chip i{display:block;width:30px;height:3px;border-radius:2px;margin-top:4px;background:var(--line-strong)}
+.eta-chip i.t{background:var(--yellow)}
+.eta-chip.on{background:var(--btn-pri);border-color:var(--accent);color:var(--on-navy)}
+.eta-chip.on small{color:var(--on-navy-dim)}
+.wxc-taf .taf-periods{gap:0}
+.wxc-taf .taf-period,.wxc-taf .taf-period.is-current,.wxc-taf .taf-period.is-eta-other,.wxc-taf .taf-period.is-applied,.wxc-taf .taf-period.is-excluded,.wxc-taf .taf-period.is-tempo{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:10px;border:0;border-top:1px solid var(--line);border-radius:0;background:none;box-shadow:none;outline:none!important;padding:10px 0;min-height:0;opacity:1}
+.wxc-taf .tp-type-col{grid-column:1;grid-row:1;padding:0;width:auto;border:0;background:none;display:block}
+.wxc-taf .tp-type{display:block;text-align:center;font:800 10.5px var(--body);letter-spacing:.06em;padding:3px 0;border-radius:4px;border:1px solid var(--line-strong);background:none;color:var(--muted)}
+.wxc-taf .tp-main{grid-column:2;grid-row:1;padding:0;min-width:0}
+.wxc-taf .tp-l1{font:600 13.5px var(--body);color:var(--ink)}
+.wxc-taf .tp-wind{font-weight:800}
+.wxc-taf .tp-when{font:600 11.5px var(--body);color:var(--muted);margin-top:1px}
+.wxc-taf .tp-note{font:600 11.5px var(--body);margin-top:2px}
+.wxc-taf .tp-note.warn{color:var(--warn)}.wxc-taf .tp-note.ok{color:var(--ok-text)}
+.wxc-taf .tp-apply{grid-column:3;grid-row:1;padding:0;font:700 12px var(--body);white-space:nowrap;color:var(--muted);max-width:none;text-align:right}
+.wxc-taf .taf-period.is-current .tp-apply,.wxc-taf .taf-period.is-applied .tp-apply,.wxc-taf .taf-period.is-eta-other .tp-apply{color:var(--ok-text)}
+.wxc-taf .taf-period.is-current .tp-type,.wxc-taf .taf-period.is-applied .tp-type{color:var(--ink);border-color:var(--ink)}
+.wxc-taf .taf-period.is-excluded .tp-apply{color:var(--warn);white-space:nowrap;max-width:none}
+.wxc-taf .taf-period.is-excluded .tp-l1{color:var(--muted)}
+.wxc-taf .taf-period.is-inactive:not(.is-applied){opacity:.5}
+/* case à cocher : période utilisée pour le calcul */
+.wxc-taf .tp-apply{font-size:0!important;width:24px;height:24px;border:2px solid var(--line-strong);border-radius:6px;display:grid;place-items:center;padding:0;background:var(--card)}
+.wxc-taf .tp-apply::after{content:"";font:800 15px/1 var(--body);color:#fff}
+.wxc-taf .taf-period.is-applied .tp-apply,.wxc-taf .taf-periods:not(:has(.is-applied)) .taf-period.is-current .tp-apply{background:var(--ok);border-color:var(--ok)}
+.wxc-taf .taf-period.is-applied .tp-apply::after,.wxc-taf .taf-periods:not(:has(.is-applied)) .taf-period.is-current .tp-apply::after{content:"✓"}
+.wxc-taf .taf-period.is-excluded .tp-apply{visibility:hidden}
+.wxc-taf .taf-period.is-excluded{cursor:default}
+.wxc-taf .taf-periods:has(.is-applied) .taf-period.is-current:not(.is-applied) .tp-type{color:var(--muted);border-color:var(--line-strong)}
+.wxc-taf .taf-period.is-applied .tp-type{color:var(--ink);border-color:var(--ink)}
+.wxc-taf .taf-periods:not(.has-eta) .taf-period,.wxc-taf .taf-periods.has-eta:not(.show-all) .taf-period.is-inactive{display:none}
+.wxc-taf .taf-all{border-top:1px solid var(--line);padding-top:10px;width:100%;text-align:left}
 </style>
 </head>
 <body>
@@ -4767,19 +4810,19 @@ function renderTafPicker(tafData) {
 
       let applyLabel;
       if (!isActive) {
-        applyLabel = '↙ appliquer';
+        applyLabel = 'appliquer';
       } else if (excluded) {
         // Période active mais exclue de la comparaison
         const t = type.toUpperCase();
-        if (t === 'PROB30') applyLabel = '⚠ non retenu (probabilité trop faible)';
-        else if (/PROB(?:30|40).*TEMPO/.test(t)) applyLabel = '⚠ non retenu (phénomène passager)';
-        else if (t === 'TEMPO' && p.wx_type === 'transient') applyLabel = '⚠ non retenu (phénomène passager)';
-        else applyLabel = '⚠ ignoré';
+        if (t === 'PROB30') applyLabel = 'probabilité faible';
+        else if (/PROB(?:30|40).*TEMPO/.test(t)) applyLabel = 'temporairement';
+        else if (t === 'TEMPO' && p.wx_type === 'transient') applyLabel = 'temporairement';
+        else applyLabel = 'ignoré';
       } else if (compareablePeriods.length === 1) {
-        applyLabel = '✓ ETA';
+        applyLabel = '✓ retenu';
       } else {
         const rank2 = rankByIdx[i] ?? 99;
-        applyLabel = rank2 === 1 ? '⚠ retenir' : '✓ ETA';
+        applyLabel = rank2 === 1 ? '⚠ à retenir' : '✓ retenu';
       }
 
       const cls = ['taf-period',
@@ -4796,27 +4839,23 @@ function renderTafPicker(tafData) {
         const prevGust = p.prevWind.gust ?? p.prevWind.speed ?? 0;
         const curGust  = p.wind.gust    ?? p.wind.speed     ?? 0;
         if (curGust >= prevGust) {
-          becmgHint = '<div class="tp-extra" style="color:#D97706">⬆ Vent qui empire — conditions appliquées dès le début du changement</div>';
+          becmgHint = '<div class="tp-note warn">Vent qui forcit : appliqué dès le début du changement</div>';
         } else {
-          becmgHint = '<div class="tp-extra" style="color:#059669">⬇ Vent en amélioration — conditions appliquées seulement à la fin du changement</div>';
+          becmgHint = '<div class="tp-note ok">Vent qui faiblit : appliqué seulement à la fin du changement</div>';
         }
       }
       if (p.type === 'TEMPO') {
         if (p.wx_type === 'transient')
-          becmgHint = '<div class="tp-extra" style="color:#9CA3AF">Phénomène passager — non retenu pour le calcul</div>';
+          becmgHint = '';
         else if (p.wx_type === 'persistent')
-          becmgHint = '<div class="tp-extra" style="color:#D97706">Phénomène durable — retenu pour le calcul</div>';
+          becmgHint = '<div class="tp-note warn">Phénomène durable : retenu pour le calcul</div>';
       }
 
       return `<div class="${cls}" onclick="applyTafPeriodImpl(${i})">
-        <div class="tp-type-col">
-          <span class="tp-type">${type}</span>
-          <span class="tp-time">${t1.replace('→','')}</span>
-          <span class="tp-time">${t2}</span>
-        </div>
+        <div class="tp-type-col"><span class="tp-type">${type}</span></div>
         <div class="tp-main">
-          <span class="tp-wind">${wind}</span>
-          ${extra}${becmgHint}
+          <div class="tp-l1"><span class="tp-wind">${wind}</span>${p.extra_summary ? '<span class="tp-x"> · ' + p.extra_summary + '</span>' : ''}</div>
+          <div class="tp-when">${t1.replace('→','').trim()} → ${t2}</div>${becmgHint}
         </div>
         <span class="tp-apply">${applyLabel}</span>
       </div>`;
@@ -4902,7 +4941,7 @@ function applyTafPeriodImpl(idx) {
     const applySpan = clickedEl.querySelector('.tp-apply');
     if (applySpan) {
       if (!applySpan.dataset.original) applySpan.dataset.original = applySpan.textContent;
-      applySpan.textContent = '✓ appliqué';
+      applySpan.textContent = '✓ retenu';
     }
   }
   // forecast et period déjà définis en début de fonction
@@ -5402,7 +5441,8 @@ function buildTicketHTML() {
     .vb { text-align:center; font-weight:800; font-size:16px; padding:4px 0; margin:4px 0; border:2px solid #000; }
     .vb.bad { background:#000; color:#fff; }
     .foot { text-align:center; font-size:11px; font-weight:600; margin-top:8px; }
-  </style></head><body>
+  
+</style></head><body>
     <div class="h1">PERFORMANCES</div>
     <div class="ac">${aircraft}</div>
     <div class="sub">${dateStr} ${timeStr}</div>
@@ -8186,15 +8226,65 @@ if ('serviceWorker' in navigator) {
     pe.classList.toggle('show-all', tafShowAll);
     const n = pe.querySelectorAll('.taf-period').length;
     tafAll.hidden = !n || !val('arrEta');
-    tafAll.textContent = tafShowAll ? 'Seulement les périodes actives' : 'Toutes les périodes du TAF (' + n + ')';
+    tafAll.textContent = tafShowAll ? 'Masquer le TAF complet ▴' : 'Voir le TAF complet (' + n + ' période' + (n > 1 ? 's' : '') + ') ▾';
     const hint = pe.parentNode.querySelector('.taf-hint') || (() => { const h = document.createElement('div'); h.className = 'taf-hint'; pe.parentNode.insertBefore(h, pe); return h; })();
-    hint.textContent = val('arrEta') ? 'Périodes actives à cette heure' : 'Choisir l\'heure d\'arrivée prévue pour voir les périodes du TAF qui s\'appliquent.';
+    hint.textContent = val('arrEta') ? '' : 'Choisir l\'heure d\'arrivée prévue.'; hint.hidden = !!val('arrEta');
   };
   tafAll.addEventListener('click', () => { tafShowAll = !tafShowAll; paintTafAll(); });
   new MutationObserver(() => { paintTafAll(); }).observe($id('arrTafPeriods'), { childList: true });
   ['dep', 'arr'].forEach(side => new MutationObserver(() => setTimeout(() => renderWx(side), 0))
     .observe($id(side + 'MetarMsg'), { childList: true, characterData: true, subtree: true }));
   $id('arrEta').addEventListener('change', () => setTimeout(() => { renderWx('arr'); paintTafAll(); }, 150));
+
+  /* Heure d'arrivée : pastilles (une par heure couverte par le TAF) */
+  (function () {
+    const sel = $id('arrEta'), row = $id('arrTafWrap').querySelector('.taf-eta-row');
+    sel.classList.add('eta-hidden');
+    const strip = document.createElement('div'); strip.className = 'eta-strip'; strip.id = 'arrEtaChips';
+    row.appendChild(strip);
+    const p2 = n => String(n).padStart(2, '0');
+    const JR = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+    const isTemp = p => /TEMPO|PROB/i.test(p.type_label || p.type || '');
+    const tempoAt = ts => {
+      const fc = $id('arrTafPeriods')._forecast || [];
+      return fc.some(p => { if (!isTemp(p)) return false;
+        const a = p.start_time && p.start_time.dt ? +new Date(p.start_time.dt) : NaN, b = p.end_time && p.end_time.dt ? +new Date(p.end_time.dt) : NaN;
+        return ts >= a && ts < b; });
+    };
+    let painting = false;
+    const paint = () => {
+      painting = true;
+      const opts = [...sel.options].filter(o => o.dataset.ts);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let lastDay = null, h = '';
+      opts.forEach(o => {
+        const d = new Date(+o.dataset.ts), dd = new Date(d); dd.setHours(0, 0, 0, 0);
+        const k = dd.getTime();
+        if (k !== lastDay) {
+          lastDay = k;
+          const diff = Math.round((k - today.getTime()) / 86400000);
+          const JL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+          const nm = diff === 0 ? 'Aujourd\'hui' : diff === 1 ? 'Demain' : JL[d.getDay()];
+          h += '<span class="eta-day"><b>' + nm + '</b>' + (diff === 0 || diff === 1 ? JR[d.getDay()] + ' ' : '') + p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + '</span>';
+        }
+        h += '<button type="button" class="eta-chip' + (o.selected && sel.value !== '' ? ' on' : '') + '" data-v="' + o.value + '">' +
+          '<b>' + p2(d.getHours()) + 'h</b><small>' + p2(d.getUTCHours()) + 'z</small><i class="' + (tempoAt(+o.dataset.ts) ? 't' : '') + '"></i></button>';
+      });
+      strip.innerHTML = h;
+      strip.hidden = !opts.length;
+      const on = strip.querySelector('.eta-chip.on');
+      if (on) strip.scrollLeft = Math.max(0, on.offsetLeft - strip.clientWidth / 2 + on.offsetWidth / 2);
+      painting = false;
+    };
+    strip.addEventListener('click', e => {
+      const b = e.target.closest('.eta-chip'); if (!b) return;
+      sel.value = b.dataset.v; sel.dispatchEvent(new Event('change'));
+    });
+    new MutationObserver(() => { if (!painting) setTimeout(paint, 0); }).observe(sel, { childList: true, subtree: true });
+    new MutationObserver(() => setTimeout(paint, 0)).observe($id('arrTafPeriods'), { childList: true });
+    sel.addEventListener('change', () => setTimeout(paint, 0));
+    paint();
+  })();
   setInterval(() => { renderWx('dep'); renderWx('arr'); }, 60000);   // âge du METAR
 
   /* Accès pour le module des fiches enregistrées */
