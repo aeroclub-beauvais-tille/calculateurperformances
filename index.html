@@ -1133,7 +1133,7 @@ body.sheet-open{overflow:hidden}
           <input id="pilotName" class="inp" type="text" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="Prénom Nom"/>
         </label>
         <label class="f ac-sel"><span class="lbl">Avion</span>
-          <select id="aircraftSel" class="inp">
+          <select id="aircraftSel" class="inp" autocomplete="off">
             <option value="" selected>Choisir un avion</option>
             <option value="F-GCAL">F-GCAL — DR400 120cv</option>
             <option value="F-BXEK">F-BXEK — DR400 120cv</option>
@@ -1679,7 +1679,7 @@ body.sheet-open{overflow:hidden}
       <div class="f"><span class="lbl">Avions affichés</span>
         <div class="fleet" id="setFleet"></div>
         <span class="note" id="setFleetNote">Seuls les avions cochés apparaissent dans la liste.</span></div>
-      <label class="f"><span class="lbl">Avion par défaut</span><select id="setAircraft" class="inp"></select>
+      <label class="f" hidden><span class="lbl">Avion par défaut</span><select id="setAircraft" class="inp"></select>
         <span class="note">Présélectionné à l'ouverture de l'application.</span></label>
       <div class="f"><span class="lbl">Terrain de base</span>
         <input id="setBase" class="inp icao" type="text" maxlength="4" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="OACI, ex. LFOB" aria-label="Terrain de base"/>
@@ -7136,7 +7136,7 @@ if ('serviceWorker' in navigator) {
     return r;
   };
   const f1 = n => frNum((Math.round(n * 10) / 10).toFixed(1));
-  // Réserve imposée : 45 min pour les avions de l'ACBT, et en VFR de nuit (réglementaire) ; sinon 30 ou 45 au choix
+  // Réserve : 45 min par défaut pour les avions ACBT (30 possible), imposée en VFR de nuit (réglementaire)
   let resForced = null, nightManual = false;
   $id('fuelNight').addEventListener('change', () => { nightManual = $id('fuelNight').checked; computeFuel(); refreshLight(); });
   function nightDetected() {
@@ -7151,6 +7151,7 @@ if ('serviceWorker' in navigator) {
     const n = Math.min(...nights);
     return dep >= n || end >= n;
   }
+  var resAcbtFor = null;
   function applyReserveRule() {
     const ac = val('aircraftSel');
     const acbt = !!ac && clubOf(ac).k === 'acbt';
@@ -7159,21 +7160,23 @@ if ('serviceWorker' in navigator) {
     $id('fuelNight').checked = night;
     $id('fuelNight').disabled = autoNight;
     $id('fuelNightSub').textContent = autoNight ? 'détecté : vol après la nuit aéronautique' : '';
-    // Avions ACBT : 45 min de réserve de toute façon, l'interrupteur « VFR de nuit » ne changerait rien
-    document.querySelector('#stepFuel .night-row').hidden = acbt;
-    const why = acbt ? 'acbt' : night ? 'night' : null;
+    document.querySelector('#stepFuel .night-row').hidden = false;
+    // Avions ACBT : 45 min proposées par défaut (une fois par avion choisi), 30 min reste possible
+    if (acbt && !night && ac !== resAcbtFor) { resAcbtFor = ac; if (val('fuelReserve') !== '45') { $id('fuelReserve').value = '45'; computeFuel(); } }
+    if (!acbt) resAcbtFor = null;
+    const why = night ? 'night' : null;
     if (why) {
       if (val('fuelReserve') !== '45') { $id('fuelReserve').value = '45'; computeFuel(); }
     } else if (resForced) {
-      $id('fuelReserve').value = window.__defaultReserve ? window.__defaultReserve() : '45'; computeFuel();
+      $id('fuelReserve').value = acbt ? '45' : (window.__defaultReserve ? window.__defaultReserve() : '45'); computeFuel();
     }
     resForced = why;
     $id('fuelRes30').disabled = !!why;
     // Réserve imposée : on affiche la valeur, pas un choix qui n'en est pas un
     document.querySelector('#stepFuel .res-tg').hidden = !!why;
     $id('fuelResFixed').hidden = !why;
-    $id('fuelResWhy').hidden = !why;
-    $id('fuelResWhy').textContent = why === 'acbt' ? 'Imposée par l\'ACBT pour ses avions.' : why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : '';
+    $id('fuelResWhy').hidden = !why && !acbt;
+    $id('fuelResWhy').textContent = why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : acbt ? '45 min par défaut pour les avions ACBT.' : '';
   }
   function renderFuel() {
     try { applyReserveRule(); } catch (e) { /* règles chargées plus loin au démarrage */ }
@@ -7550,7 +7553,7 @@ if ('serviceWorker' in navigator) {
     applyFleet();
     // Avion par défaut : appliqué tout de suite si aucun avion n'est choisi
     settings.aircraft = $id('setAircraft').value;
-    if (settings.aircraft && !val('aircraftSel')) { $id('aircraftSel').value = settings.aircraft; $id('aircraftSel').dispatchEvent(new Event('change', { bubbles: true })); }
+    if (false) { $id('aircraftSel').value = settings.aircraft; $id('aircraftSel').dispatchEvent(new Event('change', { bubbles: true })); }
     // Réserve par défaut : appliquée si la réserve n'avait pas été changée
     const oldRes = window.__defaultReserve();
     settings.reserve = setRes;
@@ -7575,10 +7578,8 @@ if ('serviceWorker' in navigator) {
     ['dep', 'arr'].forEach(sd => { wxSig[sd] = null; renderWx(sd); });
   });
   // Au démarrage : avion par défaut et réserve du club
-  if (settings.aircraft && !AC_OFF.includes(settings.aircraft) && !val('aircraftSel') && [...$id('aircraftSel').options].some(o => o.value === settings.aircraft)) {
-    $id('aircraftSel').value = settings.aircraft;
-    $id('aircraftSel').dispatchEvent(new Event('change', { bubbles: true }));
-  }
+  // Pas d'avion par défaut : on le choisit à chaque préparation
+  if (val('aircraftSel')) { $id('aircraftSel').value = ''; $id('aircraftSel').dispatchEvent(new Event('change', { bubbles: true })); }
   $id('fuelReserve').value = window.__defaultReserve();
   $id('safety').value = window.__margin();
 
