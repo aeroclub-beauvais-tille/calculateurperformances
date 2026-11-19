@@ -1054,6 +1054,24 @@ body[data-view="pick"]{padding-bottom:24px}
 .rsv-foot{font:500 12.5px/1.4 var(--body);color:var(--muted)}
 .rsv-foot:empty{display:none}
 
+/* Mise en route, dégagement, extra fuel : trois cases sous le temps de vol */
+#fuelMoreLink{display:none!important}
+.xm{margin-top:14px}
+.xm[hidden]{display:block!important}
+.xm-hd{display:flex;justify-content:space-between;font:600 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.xm-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.xm-cell{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:var(--field);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.xm-cell .k{font:700 10px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.xm-v{display:flex;align-items:baseline;justify-content:center;gap:3px;cursor:text}
+.xm-in{width:3.2ch;border:0;background:transparent;text-align:right;font:300 26px/1.2 var(--body);color:var(--ink);padding:0;-moz-appearance:textfield;font-variant-numeric:tabular-nums}
+.xm-in::-webkit-outer-spin-button,.xm-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.xm-in::placeholder{color:var(--faint)}
+.xm-in:focus{outline:none;box-shadow:inset 0 -2px 0 var(--yellow)}
+.xm-v small{font:600 11px var(--body);color:var(--muted)}
+.xm-pm{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;margin-top:4px}
+.xm-pm button{height:32px;border-radius:6px;background:var(--card);border:1px solid var(--line-strong);color:var(--muted);font:500 18px/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.xm-pm button:active{background:var(--field-3)}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1543,10 +1561,16 @@ body[data-view="pick"]{padding-bottom:24px}
           </div>
           <button type="button" id="fuelResEdit" hidden></button>
           <button type="button" class="btn-link wx-more" id="fuelMoreLink">+ Mise en route, dégagement, extra fuel</button>
-          <div class="g3" id="fuelMore" hidden>
-            <label class="f"><span class="lbl">Mise en route</span><span class="unit-in"><input id="fuelStartup" class="inp c" type="number" min="0" inputmode="numeric" value="10" oninput="computeFuel()"/><span class="u">min</span></span></label>
-            <label class="f"><span class="lbl">Dégagement</span><span class="unit-in"><input id="fuelAlt" class="inp c" type="number" min="0" inputmode="numeric" value="20" oninput="computeFuel()"/><span class="u">min</span></span></label>
-            <label class="f"><span class="lbl">Extra fuel</span><span class="unit-in"><input id="fuelExtra" class="inp c" type="number" min="0" inputmode="numeric" oninput="computeFuel()"/><span class="u">min</span></span></label>
+          <div class="xm" id="fuelMore">
+            <div class="xm-hd"><span>À ajouter au vol</span><span>par 5 min</span></div>
+            <div class="xm-g">
+            <div class="xm-cell"><span class="k">Mise en route</span><label class="xm-v"><input id="fuelStartup" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" value="10" oninput="computeFuel()" aria-label="Mise en route en minutes"/><small>min</small></label>
+              <div class="xm-pm"><button type="button" data-x="fuelStartup" data-d="-5" aria-label="Mise en route moins 5 minutes">−</button><button type="button" data-x="fuelStartup" data-d="5" aria-label="Mise en route plus 5 minutes">+</button></div></div>
+            <div class="xm-cell"><span class="k">Dégagement</span><label class="xm-v"><input id="fuelAlt" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" value="20" oninput="computeFuel()" aria-label="Dégagement en minutes"/><small>min</small></label>
+              <div class="xm-pm"><button type="button" data-x="fuelAlt" data-d="-5" aria-label="Dégagement moins 5 minutes">−</button><button type="button" data-x="fuelAlt" data-d="5" aria-label="Dégagement plus 5 minutes">+</button></div></div>
+            <div class="xm-cell"><span class="k">Extra fuel</span><label class="xm-v"><input id="fuelExtra" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" oninput="computeFuel()" aria-label="Extra fuel en minutes"/><small>min</small></label>
+              <div class="xm-pm"><button type="button" data-x="fuelExtra" data-d="-5" aria-label="Extra fuel moins 5 minutes">−</button><button type="button" data-x="fuelExtra" data-d="5" aria-label="Extra fuel plus 5 minutes">+</button></div></div>
+            </div>
             <input id="fuelReserve" type="hidden" value="45"/>
           </div>
         </div>
@@ -7312,6 +7336,14 @@ if ('serviceWorker' in navigator) {
     $id('fuelResWhy').textContent = why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : acbt ? '45 min par défaut pour les avions ACBT.' : '';
   }
 
+
+  /* ── Mise en route / dégagement / extra fuel : − / + par 5 min, placés sous le temps de vol ── */
+  try { const fm = $id('fuelMore'), rr = $id('fuelRetourRow'); if (fm && rr) rr.after(fm); } catch (e) {}
+  $id('fuelMore').addEventListener('click', e => {
+    const b = e.target.closest('button[data-x]'); if (!b) return;
+    const i = $id(b.dataset.x); i.value = Math.max(0, (parseInt(i.value, 10) || 0) + +b.dataset.d);
+    i.dispatchEvent(new Event('input', { bubbles: true }));
+  });
   /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
   function rsvPaint() {
     const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
