@@ -1010,6 +1010,20 @@ body.sheet-open{overflow:hidden}
 .cgp-warn{margin:6px 0 4px;padding:8px 10px;border-radius:6px;background:var(--warn-bg);border:1px solid var(--warn-line);font:600 12.5px/1.4 var(--body);color:var(--ink)}
 .cgp-warn[hidden]{display:none}
 
+/* Temps de vol : − / + par 5 min et raccourcis */
+.tstep{display:grid;grid-template-columns:56px 1fr 56px;height:60px;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--card);margin-top:6px}
+.tstep .ts-b{border:0;background:var(--field);color:var(--muted);font:500 26px/1 var(--body);cursor:pointer}
+.tstep .ts-b:active{background:var(--field-3)}
+.tstep .ts-v{border:0;background:var(--card);color:var(--ink);font:300 30px/1 var(--body);font-variant-numeric:tabular-nums;cursor:text;display:flex;align-items:baseline;justify-content:center;gap:2px}
+.tstep .ts-v small{font:600 13px var(--body);color:var(--muted);margin:0 6px 0 3px}
+.tstep.is-empty .ts-v{color:var(--faint)}
+.ts-chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ts-chips button{flex:1 1 auto;min-width:52px;height:34px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:700 12.5px var(--body);cursor:pointer;white-space:nowrap}
+.ts-chips button.on{background:var(--btn-pri);border-color:var(--btn-pri);color:#fff}
+.ts-chips .ts-same{flex-basis:100%;border-style:dashed}
+.ts-raw{display:none!important}
+.ts-raw.is-edit{display:flex!important;margin-top:8px}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1439,7 +1453,13 @@ body.sheet-open{overflow:hidden}
         <div class="blk">
           <div class="blk-h"><span class="bt"><i>2</i>Le vol</span></div>
           <span class="sub">Temps de vol aller</span>
-          <div class="fuel-time">
+          <div class="tstep" data-h="fuelCruiseH" data-m="fuelCruiseM" id="ts_go">
+            <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
+            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></button>
+            <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
+          </div>
+          <div class="ts-chips" data-for="ts_go"><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
+          <div class="fuel-time ts-raw" data-for="ts_go">
             <input id="fuelCruiseH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures aller" oninput="computeFuel()"/><span class="fuel-suffix">h</span>
             <input id="fuelCruiseM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes aller" oninput="computeFuel()"/><span class="fuel-suffix">min</span>
           </div>
@@ -1450,7 +1470,13 @@ body.sheet-open{overflow:hidden}
             </div>
             <div id="fuelBackWrap" class="fuel-collapse">
               <span class="sub">Temps de vol retour</span>
-              <div class="fuel-time">
+              <div class="tstep" data-h="fuelBackH" data-m="fuelBackM" id="ts_back">
+            <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
+            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></button>
+            <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
+          </div>
+          <div class="ts-chips" data-for="ts_back"><button type="button" class="ts-same" data-same="1">Comme l'aller</button><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
+              <div class="fuel-time ts-raw" data-for="ts_back">
                 <input id="fuelBackH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures retour" oninput="computeFuel()"/><span class="fuel-suffix">h</span>
                 <input id="fuelBackM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes retour" oninput="computeFuel()"/><span class="fuel-suffix">min</span>
               </div>
@@ -6180,6 +6206,51 @@ if ('serviceWorker' in navigator) {
     if (!fromTab) { try { renderTabs(); } catch (x) {} }
   }
   window.__cgRender = cgRender;
+
+  /* ── Temps de vol : widget − / + (les champs h / min restent la source des calculs) ── */
+  const tsMin = w => { const h = parseInt(val(w.dataset.h), 10), m = parseInt(val(w.dataset.m), 10); return (isNaN(h) && isNaN(m)) ? null : (h || 0) * 60 + (m || 0); };
+  function tsSet(w, min) {
+    min = Math.max(0, Math.min(23 * 60 + 55, min));
+    const H = $id(w.dataset.h), M = $id(w.dataset.m);
+    H.value = Math.floor(min / 60); M.value = min % 60;
+    H.dispatchEvent(new Event('input', { bubbles: true })); M.dispatchEvent(new Event('input', { bubbles: true }));
+    try { computeFuel(); } catch (e) {}
+    tsPaint();
+  }
+  function tsPaint() {
+    document.querySelectorAll('.tstep').forEach(w => {
+      const t = tsMin(w);
+      w.classList.toggle('is-empty', t == null);
+      w.querySelector('.ts-h').textContent = t == null ? '0' : Math.floor(t / 60);
+      w.querySelector('.ts-mm').textContent = String(t == null ? 0 : t % 60).padStart(2, '0');
+      const ch = document.querySelector('.ts-chips[data-for="' + w.id + '"]');
+      if (ch) ch.querySelectorAll('button[data-min]').forEach(b => b.classList.toggle('on', t === +b.dataset.min));
+    });
+  }
+  document.querySelectorAll('.tstep').forEach(w => {
+    w.addEventListener('click', e => {
+      const b = e.target.closest('.ts-b');
+      if (b) { tsSet(w, (tsMin(w) || 0) + +b.dataset.d); return; }
+      if (e.target.closest('.ts-v')) {
+        const raw = document.querySelector('.ts-raw[data-for="' + w.id + '"]');
+        raw.classList.toggle('is-edit');
+        if (raw.classList.contains('is-edit')) setTimeout(() => { try { $id(w.dataset.h).focus(); } catch (x) {} }, 30);
+      }
+    });
+  });
+  document.querySelectorAll('.ts-chips').forEach(ch => ch.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const w = $id(ch.dataset.for);
+    if (b.dataset.same) { const go = tsMin($id('ts_go')); if (go != null) tsSet(w, go); return; }
+    tsSet(w, +b.dataset.min);
+  }));
+  ['fuelCruiseH', 'fuelCruiseM', 'fuelBackH', 'fuelBackM'].forEach(id => $id(id).addEventListener('input', () => setTimeout(tsPaint, 0)));
+  document.querySelectorAll('.ts-raw input').forEach(i => i.addEventListener('blur', () => setTimeout(() => {
+    const raw = i.closest('.ts-raw'); if (raw && !raw.contains(document.activeElement)) raw.classList.remove('is-edit');
+  }, 150)));
+  { const _cfTs = window.computeFuel; window.computeFuel = function () { const r = _cfTs.apply(this, arguments); try { tsPaint(); } catch (e) {} return r; }; }
+  { const _rt = window.fuelToggleRoundtrip; if (_rt) window.fuelToggleRoundtrip = function () { const r = _rt.apply(this, arguments); try { tsPaint(); } catch (e) {} return r; }; }
+  tsPaint();
 
   // Masse au décollage du centrage → calcul des performances
   let cgApplying = false;
