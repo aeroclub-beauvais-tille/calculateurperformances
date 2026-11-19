@@ -1,4 +1,4 @@
-const CACHE = 'acbt-perf-v46';
+const CACHE = 'acbt-perf-v47';
 const ASSETS = ['/', '/index.html', '/fonts/fonts.css', '/fonts/manrope-var.woff2', '/fonts/jetbrains-mono-500.woff2', '/fonts/jetbrains-mono-700.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))); self.clients.claim(); });

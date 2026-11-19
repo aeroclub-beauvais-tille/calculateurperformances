@@ -984,22 +984,33 @@ body:not([data-view="fiche"]) .fhist{display:none}
 .cgp-fuelro .fv{font:300 24px/1 var(--body);white-space:nowrap}.cgp-fuelro .fv small{font:600 12.5px var(--body);color:var(--muted)}
 .cgp-fuelro.is-guess{background:var(--warn-bg);border:1px solid var(--warn-line)}
 .cgp-man{margin-top:12px;max-width:260px}
-.acsheet{position:fixed;inset:0;z-index:200}
-.acsheet[hidden]{display:none}
-.acsheet-bg{position:absolute;inset:0;background:rgba(6,12,30,.5)}
-.acsheet-p{position:absolute;left:0;right:0;bottom:0;max-height:86vh;overflow:auto;background:var(--card);border-radius:16px 16px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto;box-shadow:0 -8px 30px rgba(0,0,0,.2)}
-.acsheet-grab{width:40px;height:4px;border-radius:2px;background:var(--line-strong);margin:4px auto 10px}
-.acsheet-hd{display:flex;justify-content:space-between;align-items:center}
-.acsheet-hd b{font:800 18px var(--body)}
-.acsheet-x{width:36px;height:36px;border:0;background:var(--field);border-radius:50%;color:var(--muted);font:700 14px var(--body);cursor:pointer}
-.acsheet-pil{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-.acsheet-pil[hidden]{display:none}
-.acsheet-club{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
-.acsheet-opt{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;border:0;border-radius:8px;background:none;cursor:pointer;color:var(--ink);text-align:left}
-.acsheet-opt b{font:700 16px var(--body)}.acsheet-opt span{font:500 13px var(--body);color:var(--muted)}
-.acsheet-opt:hover{background:var(--field)}
-.acsheet-opt.on{background:var(--field);box-shadow:inset 3px 0 0 var(--yellow)}
-body.sheet-open{overflow:hidden}
+.acpick{display:none}
+body[data-view="pick"] .acpick{display:block}
+body[data-view="pick"] .step.is-open,body[data-view="pick"] .fiche,body[data-view="pick"] .fhist,body[data-view="pick"] .cgp,body[data-view="pick"] .scope{display:none!important}
+body[data-view="pick"] .tabbar{display:none}
+body[data-view="pick"]{padding-bottom:24px}
+.acpick-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:4px 2px 12px}
+.acpick-hd h2{font:800 22px/1.2 var(--body);letter-spacing:-.01em}
+.acpick-hd p{font:500 13.5px var(--body);color:var(--muted);margin-top:4px}
+.acpick-back{flex:none;height:36px;padding:0 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--card);color:var(--ink);font:700 13px var(--body);cursor:pointer}
+.acpick-back[hidden]{display:none}
+.acpick-pil{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.acpick-pil[hidden],.acpick-pilin[hidden]{display:none}
+.acpick-pil .av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font:800 13px var(--body);flex:none}
+.acpick-pil .pt b{display:block;font:700 15px var(--body)}.acpick-pil .pt small{font:500 12px var(--body);color:var(--muted)}
+.acpick-lnk{margin-left:auto;border:0;background:none;color:var(--accent);font:700 13px var(--body);cursor:pointer}
+.acpick-pilin{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.acpick-club{display:flex;justify-content:space-between;align-items:baseline;margin:20px 2px 8px}
+.acpick-club span{font:700 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.acpick-club em{font:700 12px var(--body);font-style:normal;color:var(--muted)}
+.acpick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.acpick .acsheet-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;color:var(--ink);box-shadow:var(--shadow);min-height:78px;transition:border-color .15s}
+.acpick .acsheet-opt:hover{border-color:var(--line-strong)}
+.acpick .acsheet-opt b{font:800 19px var(--body)}
+.acpick .acsheet-opt span{font:500 13px var(--body);color:var(--muted)}
+.acpick .acsheet-opt i{margin-top:6px;font:600 11px var(--body);font-style:normal;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:2px 8px}
+.acpick .acsheet-opt.on{border:2px solid var(--ink);box-shadow:inset 0 -3px 0 var(--yellow)}
+@media (min-width:720px){body[data-view="pick"] .app{max-width:980px}}
 
 #historyList .fh-row{padding:12px 2px}
 #historyList .fh-row:first-child{border-top:0}
@@ -1127,6 +1138,14 @@ body.sheet-open{overflow:hidden}
 </header>
 
 <main class="app">
+  <!-- CHOIX DE L'AVION : page d'accueil en tuiles -->
+  <section class="acpick" id="acSheet" hidden aria-labelledby="acSheetTtl">
+    <div class="acpick-hd"><div><h2 id="acSheetTtl">Quel avion aujourd'hui ?</h2><p>Touche l'avion pour commencer la préparation.</p></div>
+      <button type="button" class="acpick-back" id="acPickBack" data-close hidden>Retour</button></div>
+    <div class="acpick-pil" id="acPilCard"><span class="av" id="acPilAv">?</span><div class="pt"><b id="acPilName">—</b><small>Pilote</small></div><button type="button" class="acpick-lnk" id="acPilEdit">Changer</button></div>
+    <label class="acpick-pilin" id="acSheetPil" hidden><span class="lbl">Ton nom (pilote)</span><input id="acSheetPilot" class="inp" type="text" autocomplete="name" placeholder="Prénom NOM"/></label>
+    <div id="acSheetList"></div>
+  </section>
 
   <!-- PÉRIMÈTRE -->
   <div class="scope">
@@ -1673,16 +1692,6 @@ body.sheet-open{overflow:hidden}
 </nav>
 
 
-<!-- CHOIX DE L'AVION -->
-<div class="acsheet" id="acSheet" hidden>
-  <div class="acsheet-bg" data-close></div>
-  <div class="acsheet-p" role="dialog" aria-modal="true" aria-labelledby="acSheetTtl">
-    <div class="acsheet-grab"></div>
-    <div class="acsheet-hd"><b id="acSheetTtl">Choisir l'avion</b><button type="button" class="acsheet-x" data-close aria-label="Fermer">✕</button></div>
-    <label class="acsheet-pil" id="acSheetPil"><span class="lbl">Pilote</span><input id="acSheetPilot" class="inp" type="text" autocomplete="name" placeholder="Nom du pilote"/></label>
-    <div id="acSheetList"></div>
-  </div>
-</div>
 <!-- HISTORIQUE -->
 <div id="historyModal" class="overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
   <div id="historySheet" class="sheet">
@@ -6023,7 +6032,7 @@ if ('serviceWorker' in navigator) {
   const TABS = ['fuel', 'cg', 'dep', 'arr', 'fiche', 'ac'];
   var cgOn = false;
   function renderTabs() {
-    const view = cgOn ? 'cg' : (openStep || 'fiche');
+    const view = pickOn ? 'pick' : cgOn ? 'cg' : (openStep || 'fiche');
     document.body.dataset.view = view;
     document.querySelectorAll('#tabbar [data-tab]').forEach(b => {
       const t = b.dataset.tab;
@@ -6038,6 +6047,7 @@ if ('serviceWorker' in navigator) {
   function goTab(t) {
     if (!TABS.includes(t)) return;
     if (t === 'ac') { acSheetOpen(); return; }
+    if (pickOn) { $id('acSheet').hidden = true; pickOn = false; }
     if (t === 'cg') { cg.seen = true; cgOn = true; renderTabs(); try { window.__cgRender && window.__cgRender(true); } catch (e) {} scrollToEl(); return; }
     cgOn = false;
     if (t === 'fiche') { openStep = null; renderSteps(); updateUI(); try { renderFicheHist(); } catch (e) {} scrollToEl(); return; }
@@ -6283,25 +6293,36 @@ if ('serviceWorker' in navigator) {
   });
 
   /* ── Choix de l'avion (depuis le bandeau) ── */
+  var pickOn = false;
+  function acPilPaint(forceEdit) {
+    const n = val('pilotName').trim();
+    $id('acPilName').textContent = n || 'Pilote à renseigner';
+    $id('acPilAv').textContent = n ? n.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
+    const edit = forceEdit || !n;
+    $id('acSheetPil').hidden = !edit; $id('acPilCard').hidden = edit;
+  }
   function acSheetOpen() {
     const sel = $id('aircraftSel'), cur = sel.value;
     const opts = [...sel.options].filter(o => o.value && !o.hidden && !o.disabled);
     const groups = [];
     opts.forEach(o => {
-      const club = (window.__acClub && window.__acClub(o.value)) || 'Autres';
-      let g = groups.find(x => x.club === club); if (!g) { g = { club, items: [] }; groups.push(g); }
+      const lbl = (window.__acClub && window.__acClub(o.value)) || 'Autres';
+      const m = /^(.*) \(([A-Z]{4})\)$/.exec(lbl);
+      const club = m ? m[1] : lbl, icao = m ? m[2] : '';
+      let g = groups.find(x => x.club === club); if (!g) { g = { club, icao, items: [] }; groups.push(g); }
       const t = o.textContent.split('—');
       g.items.push({ v: o.value, type: t[1] ? t[1].trim() : '' });
     });
-    $id('acSheetList').innerHTML = groups.map(g => '<div class="acsheet-club">' + g.club + '</div>' +
-      g.items.map(it => '<button type="button" class="acsheet-opt' + (it.v === cur ? ' on' : '') + '" data-v="' + it.v + '"><b>' + it.v + '</b><span>' + it.type +
-        (CG_DATA[it.v] ? '' : ' · sans centrage') + '</span></button>').join('')).join('');
+    $id('acSheetList').innerHTML = groups.map(g => '<div class="acpick-club"><span>' + g.club + '</span><em>' + g.icao + '</em></div><div class="acpick-grid">' +
+      g.items.map(it => '<button type="button" class="acsheet-opt' + (it.v === cur ? ' on' : '') + '" data-v="' + it.v + '"><b>' + it.v + '</b><span>' + it.type + '</span>' +
+        (CG_DATA[it.v] ? '' : '<i>sans centrage</i>') + '</button>').join('') + '</div>').join('');
     $id('acSheetPilot').value = val('pilotName');
-    $id('acSheetPil').hidden = !!val('pilotName') && !!cur;
+    acPilPaint(false);
+    $id('acPickBack').hidden = !cur;
     $id('acSheet').hidden = false;
-    document.body.classList.add('sheet-open');
+    pickOn = true; renderTabs(); scrollToEl();
   }
-  function acSheetClose() { $id('acSheet').hidden = true; document.body.classList.remove('sheet-open'); }
+  function acSheetClose() { $id('acSheet').hidden = true; pickOn = false; renderTabs(); scrollToEl(); }
   window.__acSheet = acSheetOpen;
   $id('bandAcl').addEventListener('click', acSheetOpen);
   $id('acSheet').addEventListener('click', e => {
@@ -6310,14 +6331,17 @@ if ('serviceWorker' in navigator) {
     const sel = $id('aircraftSel');
     if (sel.value !== b.dataset.v) { sel.value = b.dataset.v; sel.dispatchEvent(new Event('change', { bubbles: true })); }
     validated.ac = true;
-    acSheetClose();
+    $id('acSheet').hidden = true; pickOn = false;
+    goTab('fuel');
     try { renderBand(); cgRender(true); updateUI(); } catch (x) {}
   });
   $id('acSheetPilot').addEventListener('input', e => {
     const p = $id('pilotName'); p.value = e.target.value;
     p.dispatchEvent(new Event('input', { bubbles: true })); p.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$id('acSheet').hidden) acSheetClose(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$id('acSheet').hidden && val('aircraftSel')) acSheetClose(); });
+  $id('acPilEdit').addEventListener('click', () => { acPilPaint(true); setTimeout(() => { try { $id('acSheetPilot').focus(); } catch (e) {} }, 30); });
+  $id('acSheetPilot').addEventListener('blur', () => setTimeout(() => { if (val('pilotName').trim()) acPilPaint(false); }, 150));
 
   // Carénages : réglage déplacé dans l'onglet Carburant (ils ne jouent que sur la consommation)
   try { const sw = $id('spatsWrap'), al = document.querySelector('#stepFuel .ac-line'); if (sw && al) al.before(sw); } catch (e) {}  // carénages : visibles, juste au-dessus de la consommation qu'ils font varier
@@ -7912,7 +7936,7 @@ if ('serviceWorker' in navigator) {
   openStep = 'fuel';
   paintThemeBtn();
   applyScope();
-  if (!val('aircraftSel')) setTimeout(() => { try { if (document.getElementById('disclaimerModal') && getComputedStyle(document.getElementById('disclaimerModal')).display !== 'none') return; acSheetOpen(); } catch (e) {} }, 400);
+  if (!val('aircraftSel')) { try { acSheetOpen(); } catch (e) {} setTimeout(() => { try { if (!val('aircraftSel') && !pickOn) acSheetOpen(); else if (pickOn) { $id('acSheetPilot').value = val('pilotName'); acPilPaint(false); } } catch (e) {} }, 400); }
   window.addEventListener('resize', () => { clearTimeout(window.__rz); window.__rz = setTimeout(updateUI, 150); });
 })();
 </script>
@@ -8499,7 +8523,7 @@ if ('serviceWorker' in navigator) {
   function saveFiche() {
     if (!val('pilotName')) {
       toast('Indique ton nom de pilote pour enregistrer la fiche.', 'bad');
-      if (window.__acSheet) { window.__acSheet(); document.getElementById('acSheetPil').hidden = false; setTimeout(() => { try { document.getElementById('acSheetPilot').focus(); } catch (e) {} }, 300); }
+      if (window.__acSheet) { window.__acSheet(); document.getElementById('acSheetPil').hidden = false; document.getElementById('acPilCard').hidden = true; setTimeout(() => { try { document.getElementById('acSheetPilot').focus(); } catch (e) {} }, 300); }
       return;
     }
     const data = collect();
