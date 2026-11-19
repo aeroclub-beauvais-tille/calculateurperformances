@@ -1087,18 +1087,18 @@ body[data-view="pick"]{padding-bottom:24px}
 #fuelUsedWrap,#fuelCapWrap{border:0!important;padding:0!important;margin-top:12px;background:none;box-shadow:none}
 .fob-g{margin-top:12px}
 .fob-g[hidden]{display:none}
-.fob-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:6px}
-.fob-top b{font:300 30px/1 var(--body);font-variant-numeric:tabular-nums}
-.fob-top > div > span{font:600 13px var(--body);color:var(--muted)}
-.fob-top .r{text-align:right;font:600 12.5px/1.35 var(--body);color:var(--ink)}
-.fob-top .r span{display:block}
-.fob-top .r span + span{color:var(--muted);font-weight:500}
-.fob-bar{position:relative;height:16px;border-radius:8px;background:var(--field);border:1px solid var(--line);overflow:hidden}
-.fob-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--navy),#22357A);transition:width .3s}
-:root[data-theme="dark"] .fob-fill{background:linear-gradient(90deg,#3B53A6,var(--accent))}
-.fob-fill::after{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--yellow)}
-.fob-un{position:absolute;left:0;top:0;bottom:0;width:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 4px,transparent 4px 8px)}
-.fob-ax{display:flex;justify-content:space-between;font:600 11px var(--body);color:var(--muted);margin-top:4px}
+.fob-bar{position:relative;height:54px;border-radius:10px;background:var(--field);border:1px solid var(--line);overflow:hidden}
+.fob-txt{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 12px;color:var(--ink);gap:8px;white-space:nowrap}
+.fob-txt .l{font:600 12.5px var(--body)}.fob-txt .l b{font:800 20px var(--body);margin-right:2px}
+.fob-txt .r{text-align:right;font:700 12.5px/1.3 var(--body)}.fob-txt .r span{display:block}.fob-txt .r .fobA{font-weight:500;opacity:.8}
+.fob-fill{position:absolute;left:0;top:0;bottom:0;width:0;overflow:hidden;background:var(--navy);transition:width .3s;z-index:1}
+:root[data-theme="dark"] .fob-fill{background:#2B3F86}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fob-fill{background:#2B3F86}}
+.fob-in{position:absolute;left:0;top:0;bottom:0;width:var(--fob-w,100%)}
+.fob-in .fob-txt{color:#fff}
+.fob-un{position:absolute;left:0;top:0;bottom:0;width:0;z-index:2;background:repeating-linear-gradient(135deg,rgba(255,255,255,.28) 0 4px,transparent 4px 8px)}
+.fob-ax{display:block;font:500 11.5px var(--body);color:var(--muted);margin-top:5px}
+.fob-ax:empty{display:none}
 
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
@@ -1534,9 +1534,11 @@ body[data-view="pick"]{padding-bottom:24px}
           </div>
           <div class="onboard-line fob-old" id="fuelOnboardLine" hidden></div>
           <div class="fob-g" id="fobGauge" hidden>
-            <div class="fob-top"><div><b id="fobL">—</b><span> L à bord</span></div><div class="r"><span id="fobU">—</span><span id="fobA"></span></div></div>
-            <div class="fob-bar"><i class="fob-fill" id="fobFill"></i><i class="fob-un" id="fobUn"></i></div>
-            <div class="fob-ax"><span>0</span><span id="fobUnTxt"></span><span id="fobMax"></span></div>
+            <div class="fob-bar" id="fobBar">
+              <div class="fob-txt"><span class="l"><b class="fobL">—</b> L à bord</span><span class="r"><span class="fobU">—</span><span class="fobA"></span></span></div>
+              <i class="fob-fill" id="fobFill"><span class="fob-in"><span class="fob-txt"><span class="l"><b class="fobL">—</b> L à bord</span><span class="r"><span class="fobU">—</span><span class="fobA"></span></span></span></span></i>
+              <i class="fob-un" id="fobUn"></i>
+            </div>
           </div>
           <div class="ac-line"><span id="fuelAcSumTxt">—</span><button type="button" class="btn-link sm" id="fuelAcEdit">Modifier</button></div>
           <div class="g2" id="fuelAcFields" hidden>
@@ -7435,13 +7437,13 @@ if ('serviceWorker' in navigator) {
     $id('fobGauge').hidden = !show;
     if (!show) return;
     const max = Math.max(fc || 0, cap), us = Math.max(0, cap - un);
-    $id('fobL').textContent = fL(cap);
-    $id('fobU').textContent = fL(us) + ' L utilisables';
-    $id('fobA').textContent = conso > 0 ? 'autonomie ' + fmtHM(us / conso * 60).replace('h', ' h ') : '';
+    document.querySelectorAll('#fobBar .fobL').forEach(e => { e.textContent = fL(cap); });
+    document.querySelectorAll('#fobBar .fobU').forEach(e => { e.textContent = fL(us) + ' L utilisables'; });
+    document.querySelectorAll('#fobBar .fobA').forEach(e => { e.textContent = conso > 0 ? 'autonomie ' + fmtHM(us / conso * 60).replace('h', ' h ') : ''; });
     $id('fobFill').style.width = (max ? Math.min(100, cap / max * 100) : 0) + '%';
+    $id('fobBar').style.setProperty('--fob-w', $id('fobBar').clientWidth + 'px');
     $id('fobUn').style.width = (max ? Math.min(100, Math.min(un, cap) / max * 100) : 0) + '%';
-    $id('fobUnTxt').textContent = un ? 'inutilisable ' + fL(un) + ' L' : '';
-    $id('fobMax').textContent = max ? fL(max) + ' L' : '';
+    $id('fobBar').title = max ? 'Réservoirs ' + fL(max) + ' L' + (un ? ' · partie hachurée : ' + fL(un) + ' L inutilisables' : '') : '';
   }
   $id('fobSeg').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
@@ -7454,6 +7456,7 @@ if ('serviceWorker' in navigator) {
   { const _cfF = window.computeFuel; window.computeFuel = function () { const x = _cfF.apply(this, arguments); try { fobPaint(); } catch (e) {} return x; }; }
   $id('aircraftSel').addEventListener('change', () => setTimeout(fobPaint, 0));
   setTimeout(() => { try { fobPaint(); } catch (e) {} }, 0);
+  window.addEventListener('resize', () => { try { fobPaint(); } catch (e) {} });
   /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
   function rsvPaint() {
     const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
