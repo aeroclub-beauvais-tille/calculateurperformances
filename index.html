@@ -1114,6 +1114,7 @@ body[data-view="pick"]{padding-bottom:24px}
 .ad-dd .none{padding:12px;font:500 13px var(--body);color:var(--muted)}
 
 .cgp-live .g3 .nw{white-space:nowrap}
+.cgp-live .g3 .lim{display:inline-block;margin-top:3px;font-size:11px;opacity:.85}
 
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
@@ -1699,7 +1700,7 @@ body[data-view="pick"]{padding-bottom:24px}
       <div class="bar"><i id="cgBar"></i></div>
       <div class="cap" id="cgCap">—</div>
       <div class="g3">
-        <div><div class="k">Bras de levier</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
+        <div><div class="k">Takeoff mass</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
         <div><div class="k">Zero fuel mass</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
         <div><div class="k">Landing mass</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
       </div>
@@ -6295,8 +6296,8 @@ if ('serviceWorker' in navigator) {
     $id('cgCap').textContent = marg >= 0
       ? 'Reste ' + cgF(marg) + ' kg avant la masse max · reportée dans Départ et Arrivée'
       : cgF(-marg) + ' kg au-dessus de la masse max';
-    $id('cgCg').textContent = cgF(c.to[1], 3) + ' m';
-    $id('cgCgL').innerHTML = 'limites<br><span class="nw">' + cgF(cgFrontAt(a, Math.min(m, a.mtow)), 3) + ' – ' + cgF(a.aft, 3) + '</span>';
+    $id('cgCg').textContent = cgF(m) + ' kg';
+    $id('cgCgL').innerHTML = 'bras de levier<br><span class="nw">' + cgF(c.to[1], 3) + ' m</span><br><span class="lim">limites ' + cgF(cgFrontAt(a, Math.min(m, a.mtow)), 3) + ' – ' + cgF(a.aft, 3) + '</span>';
     $id('cgZf').textContent = cgF(c.zf[0]) + ' kg'; $id('cgZfC').innerHTML = 'bras de levier<br><span class="nw">' + cgF(c.zf[1], 3) + ' m</span>';
     $id('cgLd').textContent = ld ? cgF(ld.to[0]) + ' kg' : '—';
     $id('cgLdC').innerHTML = ld ? 'bras de levier<br><span class="nw">' + cgF(ld.to[1], 3) + ' m</span>' : 'temps de vol ?';
