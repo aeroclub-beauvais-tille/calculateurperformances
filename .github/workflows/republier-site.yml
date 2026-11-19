@@ -1,0 +1,27 @@
+name: Republier le site du club
+
+# Perfs est intégrée dans l'espace membres du site du club (dépôt acbt_horizon, /membre/perfs/).
+# À chaque modification de Perfs, on demande à Cloudflare de republier ce site pour qu'il prenne la nouvelle version.
+# Il faut la variable secrète CLOUDFLARE_DEPLOY_HOOK (Settings > Secrets and variables > Actions) :
+# l'adresse du « Deploy hook » du projet Cloudflare Pages du site (la même que dans acbt_horizon).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  republier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Demander une republication à Cloudflare
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::CLOUDFLARE_DEPLOY_HOOK n'est pas encore réglé : rien à faire."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null && echo "Republication demandée."
