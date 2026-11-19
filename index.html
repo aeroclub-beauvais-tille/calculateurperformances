@@ -1100,6 +1100,19 @@ body[data-view="pick"]{padding-bottom:24px}
 .fob-ax{display:block;font:500 11.5px var(--body);color:var(--muted);margin-top:5px}
 .fob-ax:empty{display:none}
 
+/* Choix du terrain : liste sous le champ (base, récents, proches, recherche) */
+.ad-chips{display:none!important}
+.ad-dd{margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--card);box-shadow:0 10px 28px rgba(11,30,79,.14);overflow:hidden;max-height:420px;overflow-y:auto}
+.ad-dd[hidden]{display:none}
+.ad-dd .g{font:700 10.5px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px;background:var(--field)}
+.ad-dd .it{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:8px;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:var(--card);color:var(--ink);text-align:left;cursor:pointer}
+.ad-dd .it:hover,.ad-dd .it.hl{background:var(--field)}
+.ad-dd .it b{font:800 14.5px var(--body);letter-spacing:.03em}
+.ad-dd .it span{font:500 13px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-dd .it em{font:600 11.5px var(--body);font-style:normal;color:var(--muted);white-space:nowrap}
+.ad-dd .it.act b{grid-column:1/3;font-weight:700;letter-spacing:0;color:var(--accent)}
+.ad-dd .none{padding:12px;font:500 13px var(--body);color:var(--muted)}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1280,11 +1293,12 @@ body[data-view="pick"]{padding-bottom:24px}
           <div class="blk-h"><span class="bt"><i>1</i>Terrain</span></div>
           <div class="row">
             <label class="f icao-f"><span class="lbl sr">Terrain de départ (OACI)</span>
-              <input id="depIcao" class="inp icao" type="text" maxlength="4" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="OACI" aria-label="Terrain de départ (OACI)"/>
+              <input id="depIcao" class="inp icao" type="text" maxlength="24" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="OACI" aria-label="Terrain de départ (OACI)" role="combobox" aria-expanded="false" aria-controls="depAdDd"/>
             </label>
             <button id="btnDepMetar" class="btn pri wx-load" type="button"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>Charger la météo</button>
           </div>
-          <div class="ad-chips" id="depAdChips"></div>
+          <div class="ad-dd" id="depAdDd" role="listbox" hidden></div>
+          <div class="ad-chips" id="depAdChips" hidden></div>
           <div class="ad-near" id="depAdNear" hidden></div>
           <button type="button" class="btn-link sm ad-base" id="depSetBase" hidden></button>
           <span id="depAirportName" class="airport-name"></span>
@@ -1381,7 +1395,7 @@ body[data-view="pick"]{padding-bottom:24px}
           <span id="sameAsDepOr" hidden></span>
           <div class="row">
             <label class="f icao-f"><span class="lbl sr">Terrain d'arrivée (OACI)</span>
-              <input id="arrIcao" class="inp icao" type="text" maxlength="4" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="OACI" aria-label="Terrain d'arrivée (OACI)"/>
+              <input id="arrIcao" class="inp icao" type="text" maxlength="24" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="OACI" aria-label="Terrain d'arrivée (OACI)" role="combobox" aria-expanded="false" aria-controls="arrAdDd"/>
             </label>
             <button id="btnArrWx" class="btn pri wx-load" type="button"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>Charger la météo</button>
           </div>
@@ -1390,7 +1404,8 @@ body[data-view="pick"]{padding-bottom:24px}
             <button id="arrWxFcst" class="toggle-btn" type="button">Prévue à l'arrivée<small>TAF</small></button>
           </div>
           <div hidden><button id="btnArrMetar" type="button">METAR</button><button id="btnArrTaf" type="button">TAF</button></div>
-          <div class="ad-chips" id="arrAdChips"></div>
+          <div class="ad-dd" id="arrAdDd" role="listbox" hidden></div>
+          <div class="ad-chips" id="arrAdChips" hidden></div>
           <div class="ad-near" id="arrAdNear" hidden></div>
           <button type="button" class="btn-link sm ad-base" id="arrSetBase" hidden></button>
           <span id="arrAirportName" class="airport-name"></span>
@@ -1674,17 +1689,17 @@ body[data-view="pick"]{padding-bottom:24px}
     <div class="cgp-card">
       <div class="cgp-bt"><i>2</i>Enveloppe de centrage</div>
       <svg id="cgChart" viewBox="0 0 360 280" role="img" aria-label="Enveloppe de centrage et points de chargement"></svg>
-      <div class="cgp-leg"><span><i class="z"></i>ZFM</span><span><i class="t"></i>TOM</span><span id="cgLegL"><i class="l"></i>LM</span></div>
+      <div class="cgp-leg"><span><i class="z"></i>Zero fuel mass</span><span><i class="t"></i>Takeoff mass</span><span id="cgLegL"><i class="l"></i>Landing mass</span></div>
       <div class="cgp-note" id="cgTripNote"></div>
     </div>
     <div class="cgp-live" id="cgLive">
-      <div class="h"><div><div class="k">Takeoff mass (TOM)</div><div class="big"><span id="cgTow">—</span><small>kg / <span id="cgMtow">—</span></small></div></div><span class="cgpill" id="cgPill">—</span></div>
+      <div class="h"><div><div class="k">Takeoff mass</div><div class="big"><span id="cgTow">—</span><small>kg / <span id="cgMtow">—</span></small></div></div><span class="cgpill" id="cgPill">—</span></div>
       <div class="bar"><i id="cgBar"></i></div>
       <div class="cap" id="cgCap">—</div>
       <div class="g3">
         <div><div class="k">Centrage</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
-        <div><div class="k">Zero fuel mass (ZFM)</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
-        <div><div class="k">Landing mass (LM)</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
+        <div><div class="k">Zero fuel mass</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
+        <div><div class="k">Landing mass</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
       </div>
       <div class="why" id="cgWhy" hidden></div>
       <button type="button" class="use" id="cgUse">—</button>
@@ -2494,14 +2509,16 @@ $('#safety').addEventListener('input', () => {
 ['depIcao','arrIcao'].forEach(id => {
   const el = $('#'+id);
   const side = id.startsWith('dep') ? 'dep' : 'arr';
-  const sanitize = () => { el.value = (el.value||'').toUpperCase().replace(/[^A-Z]/g,'').slice(0,4); };
+  // Saisie : code OACI ou nom du terrain (recherche dans la liste) ; à la sortie, seul un code OACI est gardé
+  const sanitize = () => { el.value = (el.value||'').toUpperCase().replace(/[^A-Z0-9 '\-ÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ]/g,'').slice(0,24); };
+  const sanitizeEnd = () => { const v = (el.value||'').toUpperCase().trim(); el.value = /^[A-Z0-9]{4}$/.test(v) ? v : (v.length <= 4 ? v.replace(/[^A-Z0-9]/g,'') : ''); };
   el.addEventListener('input', () => {
     sanitize();
     // Masquer les pistes si l'ICAO change — elles se chargent avec METAR/TAF
     const picker = document.getElementById(side + 'RunwayPicker');
     if (picker) picker.style.display = 'none';
   });
-  el.addEventListener('blur', sanitize);
+  el.addEventListener('blur', sanitizeEnd);
 });
 
 /* ===================== QFU normalize ===================== */
@@ -6288,11 +6305,11 @@ if ('serviceWorker' in navigator) {
     const pill = $id('cgPill');
     pill.textContent = e.ok ? '✓ Dans les limites' : '✕ Hors limites'; pill.className = 'cgpill' + (e.ok ? '' : ' bad');
     const w = [];
-    if (m > a.mtow) w.push('TOM trop élevée de ' + cgF(m - a.mtow) + ' kg : retirer du carburant, des bagages ou un passager.');
+    if (m > a.mtow) w.push('Takeoff mass trop élevée de ' + cgF(m - a.mtow) + ' kg : retirer du carburant, des bagages ou un passager.');
     else if (!e.okT && c.to[1] < cgFrontAt(a, m)) w.push('Centrage trop avant : déplacer de la masse vers l\'arrière (bagages, banquette).');
     else if (!e.okT) w.push('Centrage trop arrière : alléger l\'arrière (bagages, banquette).');
-    if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'À la ZFM, le centrage passe trop arrière : chargement à revoir.' : 'À la ZFM, le centrage passe trop avant : chargement à revoir.');
-    if (e.okT && e.okZ && !e.okL) w.push('À la LM, le centrage sort des limites.');
+    if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'À la zero fuel mass, le centrage passe trop arrière : chargement à revoir.' : 'À la zero fuel mass, le centrage passe trop avant : chargement à revoir.');
+    if (e.okT && e.okZ && !e.okL) w.push('À la landing mass, le centrage sort des limites.');
     if (e.bagBad) w.push('Bagages limités à ' + a.bag + ' kg.');
     $id('cgWhy').hidden = !w.length; $id('cgWhy').textContent = w.join(' ');
     const use = $id('cgUse'), rm = Math.round(m);
@@ -7684,6 +7701,53 @@ if ('serviceWorker' in navigator) {
     };
     await Promise.all([worker(), worker(), worker()]);
   }
+
+  /* ── Liste des terrains sous le champ OACI ── */
+  const ddNorm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+  function ddRender(side, search) {
+    const dd = $id(side + 'AdDd'), q = ddNorm(val(side + 'Icao')).trim();
+    const row = (icao, txt, em, cls, attr) => '<button type="button" class="it' + (cls ? ' ' + cls : '') + '" ' + (attr || 'data-ad="' + escH(icao) + '"') + ' role="option"><b>' + escH(icao) + '</b><span>' + escH(txt || '') + '</span><em>' + (em || '') + '</em></button>';
+    let h = '';
+    if (search && q.length >= 2) {
+      const res = AD_FR.filter(r => r[0].startsWith(q) || ddNorm(r[1]).includes(q))
+        .sort((a, b) => (b[0].startsWith(q) - a[0].startsWith(q)) || a[0].localeCompare(b[0])).slice(0, 8);
+      h = res.length ? '<div class="g">Résultats</div>' + res.map(r => row(r[0], r[1], ad.base && ad.base.icao === r[0] ? '★ base' : '')).join('')
+        : (isIcao(q) ? '<div class="g">Terrain saisi</div>' + row(q, 'Code hors de la liste : utilisé tel quel', '') : '<div class="none">Aucun terrain trouvé.</div>');
+    } else {
+      const dIcao = val('depIcao').toUpperCase();
+      if (side === 'arr' && isIcao(dIcao)) h += '<div class="g">Vol local</div>' + row(dIcao, 'Même terrain qu\'au départ', 'piste et météo reprises', '', 'data-adsame="1"');
+      if (ad.base) h += '<div class="g">Terrain de base</div>' + row(ad.base.icao, adName(ad.base.icao), '★');
+      const rec = (ad.recent || []).filter(r => !ad.base || r.icao !== ad.base.icao).slice(0, 4);
+      if (rec.length) h += '<div class="g">Récents</div>' + rec.map(r => row(r.icao, adName(r.icao) || r.name)).join('');
+      const c = coordsOf(side);
+      if (c) {
+        const near = AD_FR.filter(r => r[0] !== c.icao).map(r => ({ r, nm: distNm(c.lat, c.lon, r[2], r[3]) })).filter(x => x.nm <= 60).sort((a, b) => a.nm - b.nm).slice(0, 5);
+        if (near.length) h += '<div class="g">Proches de ' + escH(c.icao) + '</div>' + near.map(x => row(x.r[0], x.r[1], Math.round(x.nm) + ' NM')).join('');
+      }
+      h += '<button type="button" class="it act" data-ddpos="1"><b>⌖ Terrains autour de la position actuelle</b><em></em></button>';
+    }
+    dd.innerHTML = h;
+  }
+  function ddOpen(side, search) { ddRender(side, search); $id(side + 'AdDd').hidden = false; $id(side + 'Icao').setAttribute('aria-expanded', 'true'); }
+  function ddClose(side) { $id(side + 'AdDd').hidden = true; $id(side + 'Icao').setAttribute('aria-expanded', 'false'); }
+  ['dep', 'arr'].forEach(side => {
+    const inp = $id(side + 'Icao'), dd = $id(side + 'AdDd');
+    inp.addEventListener('focus', () => { ddOpen(side); setTimeout(() => { try { inp.select(); } catch (e) {} }, 0); });
+    inp.addEventListener('click', () => { if (dd.hidden) ddOpen(side); });
+    inp.addEventListener('input', () => ddOpen(side, true));
+    inp.addEventListener('blur', () => setTimeout(() => ddClose(side), 150));
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { ddClose(side); return; }
+      if (e.key === 'Enter' && !dd.hidden && ddNorm(inp.value).trim().length >= 2 && !isIcao(ddNorm(inp.value).trim())) {
+        const f = dd.querySelector('.it[data-ad]'); if (f) { e.preventDefault(); f.click(); }
+      }
+    });
+    dd.addEventListener('pointerdown', e => e.preventDefault());   // garder le focus jusqu'au choix
+    dd.addEventListener('click', e => {
+      if (e.target.closest('[data-ddpos]')) { ddClose(side); inp.blur(); nearOpen[side] = true; renderAd(); showNear(side); locate(side); return; }
+      if (e.target.closest('[data-ad],[data-adsame]')) { ddClose(side); setTimeout(() => inp.blur(), 0); }
+    });
+  });
   ['dep', 'arr'].forEach(side => {
     stepEl(side).addEventListener('click', e => {
       const same = e.target.closest('[data-adsame]');
