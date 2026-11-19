@@ -1674,17 +1674,17 @@ body[data-view="pick"]{padding-bottom:24px}
     <div class="cgp-card">
       <div class="cgp-bt"><i>2</i>Enveloppe de centrage</div>
       <svg id="cgChart" viewBox="0 0 360 280" role="img" aria-label="Enveloppe de centrage et points de chargement"></svg>
-      <div class="cgp-leg"><span><i class="z"></i>Sans carburant</span><span><i class="t"></i>Décollage</span><span id="cgLegL"><i class="l"></i>Atterrissage</span></div>
+      <div class="cgp-leg"><span><i class="z"></i>ZFM</span><span><i class="t"></i>TOM</span><span id="cgLegL"><i class="l"></i>LM</span></div>
       <div class="cgp-note" id="cgTripNote"></div>
     </div>
     <div class="cgp-live" id="cgLive">
-      <div class="h"><div><div class="k">Masse au décollage</div><div class="big"><span id="cgTow">—</span><small>kg / <span id="cgMtow">—</span></small></div></div><span class="cgpill" id="cgPill">—</span></div>
+      <div class="h"><div><div class="k">Takeoff mass (TOM)</div><div class="big"><span id="cgTow">—</span><small>kg / <span id="cgMtow">—</span></small></div></div><span class="cgpill" id="cgPill">—</span></div>
       <div class="bar"><i id="cgBar"></i></div>
       <div class="cap" id="cgCap">—</div>
       <div class="g3">
         <div><div class="k">Centrage</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
-        <div><div class="k">Sans carbu</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
-        <div><div class="k">Atterrissage</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
+        <div><div class="k">Zero fuel mass (ZFM)</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
+        <div><div class="k">Landing mass (LM)</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
       </div>
       <div class="why" id="cgWhy" hidden></div>
       <button type="button" class="use" id="cgUse">—</button>
@@ -6288,11 +6288,11 @@ if ('serviceWorker' in navigator) {
     const pill = $id('cgPill');
     pill.textContent = e.ok ? '✓ Dans les limites' : '✕ Hors limites'; pill.className = 'cgpill' + (e.ok ? '' : ' bad');
     const w = [];
-    if (m > a.mtow) w.push('Masse au décollage trop élevée de ' + cgF(m - a.mtow) + ' kg : retirer du carburant, des bagages ou un passager.');
+    if (m > a.mtow) w.push('TOM trop élevée de ' + cgF(m - a.mtow) + ' kg : retirer du carburant, des bagages ou un passager.');
     else if (!e.okT && c.to[1] < cgFrontAt(a, m)) w.push('Centrage trop avant : déplacer de la masse vers l\'arrière (bagages, banquette).');
     else if (!e.okT) w.push('Centrage trop arrière : alléger l\'arrière (bagages, banquette).');
-    if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'Sans carburant, le centrage passe trop arrière : chargement à revoir.' : 'Sans carburant, le centrage passe trop avant : chargement à revoir.');
-    if (e.okT && e.okZ && !e.okL) w.push('À l\'atterrissage, le centrage sort des limites.');
+    if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'À la ZFM, le centrage passe trop arrière : chargement à revoir.' : 'À la ZFM, le centrage passe trop avant : chargement à revoir.');
+    if (e.okT && e.okZ && !e.okL) w.push('À la LM, le centrage sort des limites.');
     if (e.bagBad) w.push('Bagages limités à ' + a.bag + ' kg.');
     $id('cgWhy').hidden = !w.length; $id('cgWhy').textContent = w.join(' ');
     const use = $id('cgUse'), rm = Math.round(m);
