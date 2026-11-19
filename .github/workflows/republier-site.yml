@@ -4,6 +4,7 @@ name: Republier le site du club
 # À chaque modification de Perfs, on demande à Cloudflare de republier ce site pour qu'il prenne la nouvelle version.
 # Il faut la variable secrète CLOUDFLARE_DEPLOY_HOOK (Settings > Secrets and variables > Actions) :
 # l'adresse du « Deploy hook » du projet Cloudflare Pages du site (la même que dans acbt_horizon).
+# CLOUDFLARE_DEPLOY_HOOK_PREPA (facultatif) : Deploy hook de l'ancien site prepa-vols-acbt.pages.dev, gardé en parallèle.
 on:
   push:
     branches: [main]
@@ -19,9 +20,12 @@ jobs:
       - name: Demander une republication à Cloudflare
         env:
           HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+          HOOK_PREPA: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_PREPA }}
         run: |
-          if [ -z "$HOOK" ]; then
-            echo "::notice::CLOUDFLARE_DEPLOY_HOOK n'est pas encore réglé : rien à faire."
-            exit 0
-          fi
-          curl -fsS -X POST "$HOOK" > /dev/null && echo "Republication demandée."
+          ok=0
+          for nom in HOOK HOOK_PREPA; do
+            url="${!nom}"
+            if [ -z "$url" ]; then echo "::notice::$nom n'est pas réglé : ignoré."; continue; fi
+            curl -fsS -X POST "$url" > /dev/null && echo "$nom : republication demandée." || ok=1
+          done
+          exit $ok
