@@ -1172,7 +1172,7 @@ body[data-view="pick"]{padding-bottom:24px}
   </div>
   <!-- Bandeau du vol (style Companion) -->
   <div class="band" id="band">
-    <button type="button" class="band-l" id="bandAcl" aria-haspopup="dialog" aria-label="Changer d'avion"><span class="band-fno"><b id="bandAc">Choisis un avion</b><small id="bandType"></small><span class="band-caret" aria-hidden="true">▾</span></span><span class="band-sub" id="bandSub"></span></button>
+    <button type="button" class="band-l" id="bandAcl" aria-haspopup="dialog" aria-label="Changer d'avion"><span class="band-fno"><b id="bandAc">Choisir un avion</b><small id="bandType"></small><span class="band-caret" aria-hidden="true">▾</span></span><span class="band-sub" id="bandSub"></span></button>
     <button type="button" class="band-r" data-tab="dep" id="bandRt"><b id="bandRoute"></b><span class="band-sub" id="bandWhen"></span></button>
   </div>
 </header>
@@ -1180,16 +1180,16 @@ body[data-view="pick"]{padding-bottom:24px}
 <main class="app">
   <!-- CHOIX DE L'AVION : page d'accueil en tuiles -->
   <section class="acpick" id="acSheet" hidden aria-labelledby="acSheetTtl">
-    <div class="acpick-hd"><div><h2 id="acSheetTtl">Quel avion aujourd'hui ?</h2><p>Touche l'avion pour commencer la préparation.</p></div>
+    <div class="acpick-hd"><div><h2 id="acSheetTtl">Quel avion aujourd'hui ?</h2><p>Toucher l'avion pour commencer la préparation.</p></div>
       <button type="button" class="acpick-back" id="acPickBack" data-close hidden>Retour</button></div>
     <div class="acpick-pil" id="acPilCard"><span class="av" id="acPilAv">?</span><div class="pt"><b id="acPilName">—</b><small>Pilote</small></div><button type="button" class="acpick-lnk" id="acPilEdit">Changer</button></div>
-    <label class="acpick-pilin" id="acSheetPil" hidden><span class="lbl">Ton nom (pilote)</span><input id="acSheetPilot" class="inp" type="text" autocomplete="name" placeholder="Prénom NOM"/></label>
+    <label class="acpick-pilin" id="acSheetPil" hidden><span class="lbl">Nom du pilote</span><input id="acSheetPilot" class="inp" type="text" autocomplete="name" placeholder="Prénom NOM"/></label>
     <div id="acSheetList"></div>
   </section>
 
   <!-- PÉRIMÈTRE -->
   <div class="scope">
-    <span class="lbl">Que prépares-tu ?</span>
+    <span class="lbl">Préparation</span>
     <div class="scope-row">
       <button id="scopeDep" class="chip-tg" type="button" aria-pressed="true" data-scope="dep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg>Décollage</button>
       <button id="scopeArr" class="chip-tg" type="button" aria-pressed="true" data-scope="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg>Atterrissage</button>
@@ -1208,7 +1208,7 @@ body[data-view="pick"]{padding-bottom:24px}
       </div>
       <div class="step-body">
         <label class="f ac-pilot"><span class="lbl">Pilote</span>
-          <input id="pilotName" class="inp" type="text" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="Prénom Nom"/>
+          <input id="pilotName" class="inp" type="text" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="Prénom NOM"/>
         </label>
         <label class="f ac-sel"><span class="lbl">Avion</span>
           <select id="aircraftSel" class="inp" autocomplete="off">
@@ -1491,7 +1491,7 @@ body[data-view="pick"]{padding-bottom:24px}
               <input id="fuelUsedH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures de vol depuis le dernier plein"/><span class="fuel-suffix">h</span>
               <input id="fuelUsedM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes de vol depuis le dernier plein"/><span class="fuel-suffix">min</span>
             </div>
-            <span class="note" id="fuelUsedRes">Indique le temps de vol depuis le dernier plein.</span>
+            <span class="note" id="fuelUsedRes">Indiquer le temps de vol depuis le dernier plein.</span>
             <button type="button" class="btn-link wx-more" id="fuelLitersLink">Je connais la quantité en litres</button>
           </div>
           <div class="blk" id="fuelCapWrap" hidden>
@@ -1663,7 +1663,7 @@ body[data-view="pick"]{padding-bottom:24px}
 
     <div class="res" id="ficheDep">
       <div class="res-top"><span class="res-ttl" id="ficheDepTtl">Décollage</span><span id="toChip" class="tag">—</span></div>
-      <div id="ficheDepWait" class="res-wait">À calculer : valide l'étape Départ.</div>
+      <div id="ficheDepWait" class="res-wait">À calculer : valider l'étape Départ.</div>
       <div id="toKpi" class="kpi-bar"><span class="kpi-val" id="toKpiVal">— m</span><span class="kpi-avail">requis / <span id="todaMini">—</span> TODA</span></div>
       <details id="depPerfDetail" style="display:none">
         <summary>Détail du calcul</summary>
@@ -1680,7 +1680,7 @@ body[data-view="pick"]{padding-bottom:24px}
 
     <div class="res" id="ficheArr">
       <div class="res-top"><span class="res-ttl" id="ficheArrTtl">Atterrissage</span><span id="ldgChip" class="tag">—</span></div>
-      <div id="ficheArrWait" class="res-wait">À calculer : valide l'étape Arrivée.</div>
+      <div id="ficheArrWait" class="res-wait">À calculer : valider l'étape Arrivée.</div>
       <div id="ldgKpi" class="kpi-bar"><span class="kpi-val" id="ldgKpiVal">— m</span><span class="kpi-avail">requis / <span id="ldaMini">—</span> LDA</span></div>
       <details id="arrPerfDetail" style="display:none">
         <summary>Détail du calcul</summary>
@@ -1696,7 +1696,7 @@ body[data-view="pick"]{padding-bottom:24px}
 
     <div class="res" id="ficheFuel">
       <div class="res-top"><span class="res-ttl">Carburant</span><span id="ficheFuelTag" class="tag">—</span></div>
-      <div id="ficheFuelWait" class="res-wait">À calculer : renseigne l'étape Carburant.</div>
+      <div id="ficheFuelWait" class="res-wait">À calculer : renseigner l'étape Carburant.</div>
       <div id="ficheFuelBody" class="kpi-bar" hidden><span class="kpi-val" id="ficheFuelVal">—</span><span class="kpi-avail" id="ficheFuelAvail"></span></div>
       <div id="ficheFuelClocks" class="res-sub" hidden><span id="ficheFuelLdg"></span><span id="ficheFuelStop"></span></div>
     </div>
@@ -1710,7 +1710,7 @@ body[data-view="pick"]{padding-bottom:24px}
     </div>
   </section>
   <section class="fhist" id="ficheHist" aria-labelledby="fhTtl">
-    <div class="fh-empty-fiche" id="fhNoCalc">Rien n'est encore calculé. Remplis Carburant, Centrage, Départ ou Arrivée : la fiche du vol apparaîtra ici.</div>
+    <div class="fh-empty-fiche" id="fhNoCalc">Rien n'est encore calculé. Remplir Carburant, Centrage, Départ ou Arrivée : la fiche du vol apparaîtra ici.</div>
     <div class="cgp-card">
       <div class="cgp-bt" id="fhTtl"><i>≡</i>Fiches enregistrées</div>
       <div id="fhList"></div>
@@ -1768,7 +1768,7 @@ body[data-view="pick"]{padding-bottom:24px}
       </button>
     </div>
     <div class="set-body">
-      <label class="f"><span class="lbl">Nom du pilote</span><input id="setPilot" class="inp" type="text" autocomplete="name" placeholder="Prénom Nom"/></label>
+      <label class="f"><span class="lbl">Nom du pilote</span><input id="setPilot" class="inp" type="text" autocomplete="name" placeholder="Prénom NOM"/></label>
       <div class="f"><span class="lbl">Avions affichés</span>
         <div class="fleet" id="setFleet"></div>
         <span class="note" id="setFleetNote">Seuls les avions cochés apparaissent dans la liste.</span></div>
@@ -2114,7 +2114,7 @@ function computeFuel() {
   } else if (conso <= 0) {
     elStop.textContent = '—:—';
     elLdg.textContent  = '—:—';
-    note.textContent = 'Renseignez une consommation valide.';
+    note.textContent = 'Renseigner une consommation valide.';
   } else {
     const stop = clockAdd(dep, enduranceMin);
     const ldg  = clockAdd(dep, Math.max(0, maxLdgMin));
@@ -5946,7 +5946,7 @@ if ('serviceWorker' in navigator) {
     const s = JSON.parse(localStorage.getItem(SCOPE_KEY) || 'null');
     if (s && typeof s === 'object') scope = { dep: !!s.dep, arr: !!s.arr, fuel: !!s.fuel };
   } catch (e) {}
-  scope = { dep: true, arr: true, fuel: true };   // plus de choix « Que prépares-tu ? »
+  scope = { dep: true, arr: true, fuel: true };   // plus de choix « Préparation »
 
   const validated = { ac: false, dep: false, arr: false, fuel: false };
   let openStep = 'ac';
@@ -6211,8 +6211,8 @@ if ('serviceWorker' in navigator) {
       if (document.activeElement && document.activeElement.id === 'cgManTow') return;
       $id('cgNone').innerHTML = immat
         ? '<b>Centrage indisponible pour ' + immat + '.</b><br>Il manque le dernier rapport de pesée et les limites du manuel de vol de cet avion.' +
-          '<label class="f cgp-man"><span class="lbl">Masse au décollage (calculée par toi)</span><span class="unit-in"><input id="cgManTow" class="inp" type="number" inputmode="numeric" value="' + (val('depTow') || '') + '"/><span class="u">kg</span></span></label>'
-        : '<b>Choisis d\'abord un avion</b> en touchant l\'immatriculation dans le bandeau bleu.';
+          '<label class="f cgp-man"><span class="lbl">Masse au décollage (calculée hors application)</span><span class="unit-in"><input id="cgManTow" class="inp" type="number" inputmode="numeric" value="' + (val('depTow') || '') + '"/><span class="u">kg</span></span></label>'
+        : '<b>Choisir d\'abord un avion</b> en touchant l\'immatriculation dans le bandeau bleu.';
       return;
     }
     const fromFuel = cgCarbuL(a);
@@ -6225,7 +6225,7 @@ if ('serviceWorker' in navigator) {
     $id('cgD').textContent = a.date || '—'; $id('cgDWrap').hidden = !a.date;
     $id('cgWarn').hidden = !a.warn; $id('cgWarn').textContent = a.warn || '';
     $id('cgFL').textContent = cgF(cg.fuel, cg.fuel % 1 ? 1 : 0); $id('cgFKg').textContent = cgF(Math.max(0, cg.fuel - a.unus) * 0.72);
-    $id('cgFuelSrc').textContent = fromFuel != null ? 'repris de l\'onglet Carburant' : 'plein supposé : renseigne l\'onglet Carburant';
+    $id('cgFuelSrc').textContent = fromFuel != null ? 'repris de l\'onglet Carburant' : 'plein supposé : renseigner l\'onglet Carburant';
     $id('cgFuelRo').classList.toggle('is-guess', fromFuel == null);
     const sb = $id('cgS_bag');
     sb.textContent = e.bagBad ? 'max ' + a.bag + ' kg dépassé' : 'bras 1,90 m · max ' + a.bag + ' kg';
@@ -6245,13 +6245,13 @@ if ('serviceWorker' in navigator) {
     $id('cgLegL').hidden = !ld;
     $id('cgTripNote').textContent = ld
       ? 'Atterrissage : ' + cgF(e.burn, 1) + ' L consommés (mise en route + trip fuel de l\'onglet Carbu).'
-      : (scope.fuel ? 'Renseigne le temps de vol dans l\'onglet Carbu pour voir le point d\'atterrissage.' : '');
+      : (scope.fuel ? 'Renseigner le temps de vol dans l\'onglet Carburant pour voir le point d\'atterrissage.' : '');
     const pill = $id('cgPill');
     pill.textContent = e.ok ? '✓ Dans les limites' : '✕ Hors limites'; pill.className = 'cgpill' + (e.ok ? '' : ' bad');
     const w = [];
-    if (m > a.mtow) w.push('Masse au décollage trop élevée de ' + cgF(m - a.mtow) + ' kg : enlève du carburant, des bagages ou un passager.');
-    else if (!e.okT && c.to[1] < cgFrontAt(a, m)) w.push('Centrage trop avant : déplace de la masse vers l\'arrière (bagages, banquette).');
-    else if (!e.okT) w.push('Centrage trop arrière : allège l\'arrière (bagages, banquette).');
+    if (m > a.mtow) w.push('Masse au décollage trop élevée de ' + cgF(m - a.mtow) + ' kg : retirer du carburant, des bagages ou un passager.');
+    else if (!e.okT && c.to[1] < cgFrontAt(a, m)) w.push('Centrage trop avant : déplacer de la masse vers l\'arrière (bagages, banquette).');
+    else if (!e.okT) w.push('Centrage trop arrière : alléger l\'arrière (bagages, banquette).');
     if (e.okT && !e.okZ) w.push(c.zf[1] > a.aft ? 'Sans carburant, le centrage passe trop arrière : chargement à revoir.' : 'Sans carburant, le centrage passe trop avant : chargement à revoir.');
     if (e.okT && e.okZ && !e.okL) w.push('À l\'atterrissage, le centrage sort des limites.');
     if (e.bagBad) w.push('Bagages limités à ' + a.bag + ' kg.');
@@ -6259,7 +6259,7 @@ if ('serviceWorker' in navigator) {
     const use = $id('cgUse'), rm = Math.round(m);
     if (e.ok && cg.seen) cgApply(rm);
     use.disabled = !e.ok;
-    use.textContent = e.ok ? 'Continuer : Départ →' : 'Corrige le chargement';
+    use.textContent = e.ok ? 'Continuer : Départ →' : 'Chargement à corriger';
     $id('cgTbl').innerHTML = '<tr><th>Poste</th><th>kg</th><th>Bras</th><th>Moment</th></tr>' +
       c.items.map(i => '<tr><td>' + i[0] + '</td><td>' + cgF(i[1], 1) + '</td><td>' + cgF(i[2], 3) + '</td><td>' + cgF(i[1] * i[2], 1) + '</td></tr>').join('') +
       '<tr><td>Carburant (' + cg.fuel + ' L' + (a.unus ? ' − ' + a.unus + ' L déjà pesés' : '') + ')</td><td>' + cgF(c.fk, 1) + '</td><td>' + cgF(CG_ARM.fuel, 3) + '</td><td>' + cgF(c.fk * CG_ARM.fuel, 1) + '</td></tr>' +
@@ -6344,6 +6344,23 @@ if ('serviceWorker' in navigator) {
     finally { cgApplying = false; }
   });
 
+
+  /* ── Nom du pilote : « Prénom NOM » (prénom avec majuscule, nom en capitales) ── */
+  const fmtPilot = v => {
+    const w = String(v || '').trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
+    if (!w.length) return '';
+    const cap = t => t.split('-').map(x => x ? x.charAt(0).toLocaleUpperCase('fr-FR') + x.slice(1).toLocaleLowerCase('fr-FR') : x).join('-');
+    return [cap(w[0])].concat(w.slice(1).map(t => t.toLocaleUpperCase('fr-FR'))).join(' ');
+  };
+  window.__fmtPilot = fmtPilot;
+  ['pilotName', 'setPilot', 'acSheetPilot'].forEach(id => {
+    const el = $id(id); if (!el) return;
+    el.addEventListener('blur', () => {
+      const f = fmtPilot(el.value); if (f === el.value) return;
+      el.value = f; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+  setTimeout(() => { try { const p = $id('pilotName'), f = fmtPilot(p.value); if (p.value && f !== p.value) { p.value = f; p.dispatchEvent(new Event('input', { bubbles: true })); p.dispatchEvent(new Event('change', { bubbles: true })); } } catch (e) {} }, 500);
   /* ── Choix de l'avion (depuis le bandeau) ── */
   var pickOn = false;
   function acPilPaint(forceEdit) {
@@ -6433,7 +6450,7 @@ if ('serviceWorker' in navigator) {
   function renderBand() {
     const ac = val('aircraftSel');
     const opt = ac ? [...$id('aircraftSel').options].find(o => o.value === ac) : null;
-    $id('bandAc').textContent = ac || 'Choisis un avion';
+    $id('bandAc').textContent = ac || 'Choisir un avion';
     $id('bandType').textContent = opt && opt.textContent.indexOf('—') > 0 ? opt.textContent.split('—')[1].trim() : '';
     const tow = val('depTow');
     const towOk = tow && (!CG_DATA[ac] || (cg.used != null && +tow === cg.used));
@@ -6571,7 +6588,7 @@ if ('serviceWorker' in navigator) {
 
   // Le bouton Valider calcule directement (plus de fenêtre de résultat ni d'attente)
   function runCalc(side) {
-    if (!val('aircraftSel')) { showValidMsg(side, '⚠ Choisis d\'abord un avion (étape Avion).'); return false; }
+    if (!val('aircraftSel')) { showValidMsg(side, '⚠ Choisir d\'abord un avion.'); return false; }
     try {
       if (side === 'dep') computeDepPerf(); else computeArrPerf();
     } catch (err) {
@@ -6754,9 +6771,9 @@ if ('serviceWorker' in navigator) {
   $id('btnAcOk').addEventListener('click', () => {
     const msg = $id('acValidMsg');
     let err = '';
-    if (!val('pilotName')) err = 'Indique ton nom de pilote.';
-    else if (!val('aircraftSel')) err = 'Choisis un avion.';
-    else if (!(+val('depTow') > 0)) err = 'Indique la masse au décollage.';
+    if (!val('pilotName')) err = 'Indiquer le nom du pilote.';
+    else if (!val('aircraftSel')) err = 'Choisir un avion.';
+    else if (!(+val('depTow') > 0)) err = 'Indiquer la masse au décollage.';
     if (err) { msg.textContent = '⚠ ' + err; msg.classList.remove('is-hidden'); return; }
     msg.classList.add('is-hidden');
     validated.ac = true;
@@ -6796,7 +6813,7 @@ if ('serviceWorker' in navigator) {
   /* ── Vol local : même terrain qu'au départ ── */
   $id('btnSameAsDep').addEventListener('click', () => {
     const icao = val('depIcao').toUpperCase();
-    if (!icao) { showValidMsg('arr', '⚠ Renseigne d\'abord le terrain de départ.'); return; }
+    if (!icao) { showValidMsg('arr', '⚠ Renseigner d\'abord le terrain de départ.'); return; }
     showValidMsg('arr', '');
     ['Icao', 'Alt', 'Oat', 'WindDir', 'WindKt', 'WindGust', 'VrbFrom', 'VrbTo', 'Qfu']
       .forEach(k => { $id('arr' + k).value = $id('dep' + k).value; });
@@ -6838,17 +6855,17 @@ if ('serviceWorker' in navigator) {
     fuelTouched = true;
     computeFuel();
     if (fuelMode === 'used' && !(usedMin() > 0)) {
-      msg.textContent = '⚠ Indique le temps de vol depuis le dernier plein.';
+      msg.textContent = '⚠ Indiquer le temps de vol depuis le dernier plein.';
       msg.classList.remove('is-hidden');
       return;
     }
     if (!fuelMode || !(+val('fuelCap') > 0)) {
-      msg.textContent = '⚠ Indique le carburant à bord : plein ou plein entamé.';
+      msg.textContent = '⚠ Indiquer le carburant à bord : plein ou autre quantité.';
       msg.classList.remove('is-hidden');
       return;
     }
     if (!fuelReady() || !fuelTrip()) {
-      msg.textContent = '⚠ Renseigne la consommation et au moins un temps de vol.';
+      msg.textContent = '⚠ Renseigner la consommation et le temps de vol.';
       msg.classList.remove('is-hidden');
       return;
     }
@@ -6892,7 +6909,7 @@ if ('serviceWorker' in navigator) {
   window.__fuelMode = () => fuelMode;
   $id('fuelFullBtn').addEventListener('click', () => {
     const fc = fullCap();
-    if (!fc) { $id('fuelValidMsg').textContent = '⚠ Choisis d\'abord un avion, ou indique une autre quantité.'; $id('fuelValidMsg').classList.remove('is-hidden'); return; }
+    if (!fc) { $id('fuelValidMsg').textContent = '⚠ Choisir d\'abord un avion, ou indiquer une autre quantité.'; $id('fuelValidMsg').classList.remove('is-hidden'); return; }
     fuelMode = 'full'; $id('fuelCap').value = fc; $id('fuelValidMsg').classList.add('is-hidden');
     computeFuel(); refreshLight();
   });
@@ -7003,7 +7020,7 @@ if ('serviceWorker' in navigator) {
       const um = usedMin(), c = (+val('fuelConso') || 0) * window.__spatsFuelFactor();
       $id('fuelUsedRes').textContent = um > 0 && fc
         ? fc + ' L − ' + fmtHM(um) + ' de vol à ' + frNum(Math.round(c * 10) / 10) + ' L/h'
-        : 'Indique le temps de vol depuis le dernier plein (carnet de route).';
+        : 'Indiquer le temps de vol depuis le dernier plein (carnet de route).';
     }
     const conso = val('fuelConso'), un = val('fuelUnusable');
     const fac = window.__spatsFuelFactor();
@@ -7016,11 +7033,11 @@ if ('serviceWorker' in navigator) {
     if (!fuelMode) {
       const box = $id('fuelVerdict');
       box.className = 'fuel-verdict is-neutral';
-      box.innerHTML = '<div class="fuel-verdict-title">Indique le carburant à bord</div><div class="fuel-verdict-sub">Choisis « Plein » ou « Autre quantité », puis le temps de vol aller.</div>';
+      box.innerHTML = '<div class="fuel-verdict-title">Indiquer le carburant à bord</div><div class="fuel-verdict-sub">Choisir « Plein » ou « Autre quantité », puis le temps de vol aller.</div>';
     } else if (fuelMode === 'used' && !(usedMin() > 0)) {
       const box = $id('fuelVerdict');
       box.className = 'fuel-verdict is-neutral';
-      box.innerHTML = '<div class="fuel-verdict-title">Temps de vol depuis le dernier plein ?</div><div class="fuel-verdict-sub">Renseigne-le pour calculer le carburant restant.</div>';
+      box.innerHTML = '<div class="fuel-verdict-title">Temps de vol depuis le dernier plein ?</div><div class="fuel-verdict-sub">À renseigner pour calculer le carburant restant.</div>';
     }
   }
   window.__refreshLight = refreshLight;
@@ -7149,7 +7166,7 @@ if ('serviceWorker' in navigator) {
       if (/ETA dans fenêtre METAR/.test(msg) && typeof lastArrTafRaw !== 'undefined' && lastArrTafRaw && lastArrTafRaw !== '—') setMetarMsg($id('arrMetarMsg'), lastArrTafRaw);
       wxSrc.arr = { txt: 'TAF' + (slot ? ' · ' + slot : ''), cls: '', pdf: 'TAF' + (slot ? ' ' + slot : '') };
       if (slot && mt instanceof Date) why.textContent = 'Arrivée prévue après la validité du METAR (' + till + ') : le TAF fait foi.';
-      else if (!slot) why.textContent = 'Choisis l\'heure d\'arrivée prévue dans le TAF.';
+      else if (!slot) why.textContent = 'Choisir l\'heure d\'arrivée prévue dans le TAF.';
     }
     why.hidden = !why.textContent;
     paintSrc('arr');
@@ -7177,7 +7194,7 @@ if ('serviceWorker' in navigator) {
         inp.classList.add('is-invalid');
         $id(sd + 'WxBan').innerHTML = '<div class="wx-ban warn"><span class="ic">⚠</span><span class="tx">' + (icao
           ? '<b>Code OACI incomplet.</b> Il faut 4 caractères, par exemple LFOB.'
-          : '<b>Veuillez d\'abord insérer un code OACI.</b>') + '</span></div>';
+          : '<b>Insérer d\'abord un code OACI.</b>') + '</span></div>';
         try { inp.focus(); } catch (e) {}
         return Promise.resolve();
       }
@@ -7430,7 +7447,7 @@ if ('serviceWorker' in navigator) {
       if (fuelMode && (fuelMode !== 'used' || usedMin() > 0) && !fuelTrip()) {
         const v = $id('fuelVerdict');
         v.className = 'fuel-verdict is-neutral';
-        v.innerHTML = '<div class="fuel-verdict-title">Indique le temps de vol</div><div class="fuel-verdict-sub">Le bilan se calcule automatiquement.</div>';
+        v.innerHTML = '<div class="fuel-verdict-title">Indiquer le temps de vol</div><div class="fuel-verdict-sub">Le bilan se calcule automatiquement.</div>';
       }
       return;
     }
@@ -7544,8 +7561,8 @@ if ('serviceWorker' in navigator) {
     }, err => {
       const m = nb.querySelector('.near-msg');
       if (m) m.textContent = err && err.code === 1
-        ? 'Position refusée : autorise la localisation pour ce site dans les réglages du navigateur.'
-        : 'Position introuvable pour le moment. Réessaie à l\'extérieur ou avec le GPS activé.';
+        ? 'Position refusée : autoriser la localisation pour ce site dans les réglages du navigateur.'
+        : 'Position introuvable pour le moment. Réessayer à l\'extérieur ou avec le GPS activé.';
     }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
   }
   function showNear(side) {
@@ -7554,10 +7571,10 @@ if ('serviceWorker' in navigator) {
     const ad0 = coordsOf(side);
     const usePos = nearMode[side] === 'pos' && myPos;
     const c = usePos ? { icao: null, lat: myPos.lat, lon: myPos.lon } : ad0;
-    const hd = '<div class="near-hd"><span class="sub">' + (c ? 'Autour de ' + (usePos ? 'ta position' : escH(c.icao)) : 'Terrains proches') + '</span>' +
+    const hd = '<div class="near-hd"><span class="sub">' + (c ? 'Autour de ' + (usePos ? 'la position actuelle' : escH(c.icao)) : 'Terrains proches') + '</span>' +
       (usePos ? (ad0 ? '<button type="button" class="btn-link sm" data-nearad>Autour de ' + escH(ad0.icao) + '</button>' : '')
               : '<button type="button" class="btn-link sm near-me" data-nearpos>' + LOC + 'Autour de moi</button>') + '</div><span class="note near-msg"></span>';
-    if (!c) { nb.innerHTML = hd; nb.querySelector('.near-msg').textContent = 'Saisis un terrain, ou touche « Autour de moi ».'; return; }
+    if (!c) { nb.innerHTML = hd; nb.querySelector('.near-msg').textContent = 'Saisir un terrain, ou toucher « Autour de moi ».'; return; }
     const list = AD_FR.filter(r => r[0] !== c.icao)
       .map(r => ({ icao: r[0], name: r[1], nm: distNm(c.lat, c.lon, r[2], r[3]) }))
       .filter(x => x.nm <= 60).sort((a, b) => a.nm - b.nm).slice(0, 10);
@@ -7662,7 +7679,7 @@ if ('serviceWorker' in navigator) {
   const paintApprox = () => {
     const ap = AC_ALL.filter(a => !AC_OFF.includes(a.v) && a.v !== 'F-HATX' && typeof aircraftData !== 'undefined' && aircraftData[a.v] && aircraftData[a.v].approx).map(a => a.v);
     const el = $id('discApprox');
-    if (el) el.textContent = ap.length ? ' Performances approximatives pour ' + ap.join(', ') + ' : vérifie au manuel.' : '';
+    if (el) el.textContent = ap.length ? ' Performances approximatives pour ' + ap.join(', ') + ' : à vérifier au manuel.' : '';
   };
   paintApprox();
   document.addEventListener('DOMContentLoaded', () => setTimeout(paintApprox, 0));
@@ -7719,7 +7736,7 @@ if ('serviceWorker' in navigator) {
   }
   const paintSetMargin = () => {
     const m = +val('setMargin');
-    $id('setMarginNote').textContent = val('setMargin') === '' || !isFinite(m) ? 'Indique une marge en %.'
+    $id('setMarginNote').textContent = val('setMargin') === '' || !isFinite(m) ? 'Indiquer une marge en %.'
       : m < CLUB_MARGIN ? '⚠ Inférieure à la marge du club (' + CLUB_MARGIN + ' %).'
       : 'Marge du club : ' + CLUB_MARGIN + ' %. Appliquée aux distances de décollage et d\'atterrissage.';
     $id('setMarginNote').classList.toggle('warn-txt', m < CLUB_MARGIN);
@@ -7942,8 +7959,8 @@ if ('serviceWorker' in navigator) {
     if (taf) {
       // ── TAF ──
       msg.split('\n').forEach(l => {
-        if (/^TAF indisponible/.test(l)) bans += banner('bad', (/Failed to fetch|NetworkError|Load failed/i.test(l) ? '<b>Service météo injoignable</b> (pas de connexion internet ?).' : '<b>' + escH(l) + '</b>') + ' Saisis le vent à la main.');
-        else if (/TAF EXPIRÉ/.test(l)) bans += banner('bad', '<b>TAF expiré :</b> non utilisé. Saisis le vent à la main.');
+        if (/^TAF indisponible/.test(l)) bans += banner('bad', (/Failed to fetch|NetworkError|Load failed/i.test(l) ? '<b>Service météo injoignable</b> (pas de connexion internet ?).' : '<b>' + escH(l) + '</b>') + ' Saisir le vent à la main.');
+        else if (/TAF EXPIRÉ/.test(l)) bans += banner('bad', '<b>TAF expiré :</b> non utilisé. Saisir le vent à la main.');
         else if (/pas encore en vigueur/.test(l)) bans += banner('warn', escH(l.replace(/^⚠\s*/, '')));
         else if (/TAF le plus proche/.test(l)) {
           const m = /:\s*([A-Z0-9]{4})\s*(\(~?\d+\s*NM\))?/.exec(l);
@@ -7970,7 +7987,7 @@ if ('serviceWorker' in navigator) {
       const first = msg.split('\n')[0];
       if (/^⛔ METAR PÉRIMÉ/.test(first)) {
         const a = /il y a ([0-9hmin]+)/.exec(first);
-        bans += banner('bad', '<b>METAR ' + escH(icao) + ' périmé</b>' + (a ? ' (émis il y a ' + escH(a[1].replace(/min$/, ' min')) + ', validité 2 h)' : '') + ' : <b>non utilisé</b>. Saisis le vent et la température à la main.');
+        bans += banner('bad', '<b>METAR ' + escH(icao) + ' périmé</b>' + (a ? ' (émis il y a ' + escH(a[1].replace(/min$/, ' min')) + ', validité 2 h)' : '') + ' : <b>non utilisé</b>. Saisir le vent et la température à la main.');
         altBtn = $id(side + 'MetarAlt');
       } else if (/^⚠ (Station la plus proche|METAR le plus proche)/.test(first)) {
         const p0 = parseMetar(raw), st = p0.icao || '?';
@@ -7986,10 +8003,10 @@ if ('serviceWorker' in navigator) {
         const net = /Failed to fetch|NetworkError|Load failed|network/i.test(first);
         const http = /HTTP\s*(\d+)/.exec(first);
         const txt = net ? '<b>Service météo injoignable</b> (pas de connexion internet ?).'
-          : http && /^(400|404)$/.test(http[1]) ? '<b>Aucun ' + (/^TAF/.test(first) ? 'TAF' : 'METAR') + ' trouvé pour ' + escH(icao) + '.</b> Vérifie le code OACI.'
+          : http && /^(400|404)$/.test(http[1]) ? '<b>Aucun ' + (/^TAF/.test(first) ? 'TAF' : 'METAR') + ' trouvé pour ' + escH(icao) + '.</b> Vérifier le code OACI.'
           : http && /^(401|403|429)$/.test(http[1]) ? '<b>Service météo indisponible pour le moment</b> (accès refusé ou trop de demandes).'
           : '<b>' + escH(first) + '</b>';
-        bans += banner('bad', txt + (/indisponible/.test(first) ? ' Saisis le vent et la température à la main.' : ''));
+        bans += banner('bad', txt + (/indisponible/.test(first) ? ' Saisir le vent et la température à la main.' : ''));
         if (/indisponible/.test(first)) altBtn = $id(side + 'MetarAlt');
       }
       if (raw) {
@@ -8027,7 +8044,7 @@ if ('serviceWorker' in navigator) {
     tafAll.hidden = !n || !val('arrEta');
     tafAll.textContent = tafShowAll ? 'Seulement les périodes actives' : 'Toutes les périodes du TAF (' + n + ')';
     const hint = pe.parentNode.querySelector('.taf-hint') || (() => { const h = document.createElement('div'); h.className = 'taf-hint'; pe.parentNode.insertBefore(h, pe); return h; })();
-    hint.textContent = val('arrEta') ? 'Périodes actives à cette heure' : 'Choisis l\'heure d\'arrivée prévue pour voir les périodes du TAF qui s\'appliquent.';
+    hint.textContent = val('arrEta') ? 'Périodes actives à cette heure' : 'Choisir l\'heure d\'arrivée prévue pour voir les périodes du TAF qui s\'appliquent.';
   };
   tafAll.addEventListener('click', () => { tafShowAll = !tafShowAll; paintTafAll(); });
   new MutationObserver(() => { paintTafAll(); }).observe($id('arrTafPeriods'), { childList: true });
@@ -8632,7 +8649,7 @@ if ('serviceWorker' in navigator) {
   let last = null;
   function saveFiche() {
     if (!val('pilotName')) {
-      toast('Indique ton nom de pilote pour enregistrer la fiche.', 'bad');
+      toast('Indiquer le nom du pilote pour enregistrer la fiche.', 'bad');
       if (window.__acSheet) { window.__acSheet(); document.getElementById('acSheetPil').hidden = false; document.getElementById('acPilCard').hidden = true; setTimeout(() => { try { document.getElementById('acSheetPilot').focus(); } catch (e) {} }, 300); }
       return;
     }
@@ -8746,7 +8763,7 @@ if ('serviceWorker' in navigator) {
         ? a.length + ' fiche' + (a.length > 1 ? 's' : '') + (pend ? ' · ' + pend + ' en attente d\'envoi au club' : ' · toutes envoyées au club')
         : '';
       if (!a.length) {
-        list.innerHTML = '<div class="arch-empty">Aucune fiche enregistrée sur cet appareil.<br>Une fois les calculs faits, touche « Enregistrer la fiche ».</div>';
+        list.innerHTML = '<div class="arch-empty">Aucune fiche enregistrée sur cet appareil.<br>Une fois les calculs faits, toucher « Enregistrer la fiche ».</div>';
         return;
       }
       list.innerHTML = a.map(ficheRow).join('');
@@ -8770,8 +8787,8 @@ if ('serviceWorker' in navigator) {
       shareOrDownload(F.renderFichePDF(r.data), fileName(r.data));
     } else if (b.dataset.act === 'del' && false) {
       const msg = r.synced
-        ? 'Supprimer cette fiche de ton appareil ?\n\nLa copie déjà envoyée aux archives du club est conservée.'
-        : 'Supprimer cette fiche de ton appareil ?\n\nElle n\'a pas encore été envoyée au club : elle sera perdue définitivement.';
+        ? 'Supprimer cette fiche de cet appareil ?\n\nLa copie déjà envoyée aux archives du club est conservée.'
+        : 'Supprimer cette fiche de cet appareil ?\n\nElle n\'a pas encore été envoyée au club : elle sera perdue définitivement.';
       if (!confirm(msg)) return;
       delRec(r.id).then(() => {
         if (last && last.rec.id === r.id) { last = null; setSaved(false); }
