@@ -1007,6 +1007,9 @@ body.sheet-open{overflow:hidden}
 .wxc-rawm{border-top:1px solid var(--line)!important;color:var(--muted)}
 .wxc-rawm span{font:700 10px var(--body);letter-spacing:.08em;color:var(--muted);margin-right:4px}
 
+.cgp-warn{margin:6px 0 4px;padding:8px 10px;border-radius:6px;background:var(--warn-bg);border:1px solid var(--warn-line);font:600 12.5px/1.4 var(--body);color:var(--ink)}
+.cgp-warn[hidden]{display:none}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1521,7 +1524,8 @@ body.sheet-open{overflow:hidden}
     <div id="cgMain">
     <div class="cgp-card">
       <div class="cgp-bt"><i>1</i>À bord</div>
-      <div class="cgp-pes"><span>Avion vide <b id="cgE">—</b> · bras <b id="cgA">—</b></span><span>Pesée du <b id="cgD">—</b></span></div>
+      <div class="cgp-pes"><span>Avion vide <b id="cgE">—</b> · bras <b id="cgA">—</b></span><span id="cgDWrap">Pesée du <b id="cgD">—</b></span></div>
+      <div class="cgp-warn" id="cgWarn" hidden></div>
       <div id="cgRows"></div>
       <div class="cgp-fuelro" id="cgFuelRo">
         <div><b>Carburant à bord</b><span id="cgFuelSrc">repris de l'onglet Carburant</span></div>
@@ -6026,6 +6030,10 @@ if ('serviceWorker' in navigator) {
     'F-GOVB': { type: 'DR400/120', date: '01/06/2015', empty: 555, moment: 197.667, mtow: 900, cap: 110, unus: 0,
                 front: [[0.205, 750], [0.428, 900]], aft: 0.564, bag: 40, aux: 1.61,
                 src: 'Pesée VF Aéro Maintenance du 01/06/2015 au Plessis-Belleville (plein d\'huile et essence résiduelle ; essence inutilisable non ajoutée, donc comptée avec le carburant). Limites : manuel de vol DR400/120, § 2.2.' },
+    'F-GYLC': { type: 'DR400/140B', date: null, empty: 600, moment: 172.2, mtow: 1000, cap: 110, unus: 10,
+                front: [[0.205, 700], [0.425, 1000]], aft: 0.564, bag: 40, aux: 1.60,
+                warn: 'Masse à vide reprise du fichier de centrage du club (600 kg, 0,287 m), pas d\'un rapport de pesée : à vérifier.',
+                src: 'Fichier « Masses et centrage DR400-140B » du club (masse à vide 600 kg, bras 0,287 m, essence inutilisable comprise, masse max 1 000 kg, limites 0,205 m jusqu\'à 700 kg, 0,425 m à 1 000 kg, 0,564 m arrière). Limite bagages à confirmer dans le manuel.' },
     'F-BTBS': { type: 'DR300/120', date: '23/10/2013', empty: 549, moment: 180.07, mtow: 865, cap: 110, unus: 0,
                 front: [[0.239, 700], [0.427, 865]], aft: 0.564, bag: 40, aux: 1.65,
                 src: 'Pesée CP Aéro du 23/10/2013. Limites : manuel de vol DR300-120, § 2.2 et centrogramme.' },
@@ -6047,7 +6055,7 @@ if ('serviceWorker' in navigator) {
   }
   const cgIn = (a, p) => p[0] <= a.mtow + 1e-6 && p[1] >= cgFrontAt(a, p[0]) - 1e-6 && p[1] <= a.aft + 1e-6;
   function cgCalc(a, L, auxL) {
-    const items = [['Avion vide (pesée du ' + a.date + ')', a.empty, a.moment / a.empty]];
+    const items = [[a.date ? 'Avion vide (pesée du ' + a.date + ')' : 'Avion vide (fichier du club)', a.empty, a.moment / a.empty]];
     CG_ROWS.forEach(([k, l]) => items.push([l, Math.max(0, +cg[k] || 0), CG_ARM[k]]));
     const zm = items.reduce((s, i) => s + i[1], 0), zmo = items.reduce((s, i) => s + i[1] * i[2], 0);
     const fk = Math.max(0, L - a.unus) * 0.72, ak = Math.max(0, auxL || 0) * 0.72;
@@ -6124,7 +6132,8 @@ if ('serviceWorker' in navigator) {
     const e = cgEval(), c = e.c, ld = e.ld;
     $id('cgE').textContent = cgF(a.empty, a.empty % 1 ? 1 : 0) + ' kg';
     $id('cgA').textContent = cgF(a.moment / a.empty, 3) + ' m';
-    $id('cgD').textContent = a.date;
+    $id('cgD').textContent = a.date || '—'; $id('cgDWrap').hidden = !a.date;
+    $id('cgWarn').hidden = !a.warn; $id('cgWarn').textContent = a.warn || '';
     $id('cgFL').textContent = cgF(cg.fuel, cg.fuel % 1 ? 1 : 0); $id('cgFKg').textContent = cgF(Math.max(0, cg.fuel - a.unus) * 0.72);
     $id('cgFuelSrc').textContent = fromFuel != null ? 'repris de l\'onglet Carburant' : 'plein supposé : renseigne l\'onglet Carburant';
     $id('cgFuelRo').classList.toggle('is-guess', fromFuel == null);
