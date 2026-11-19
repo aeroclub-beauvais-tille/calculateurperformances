@@ -1014,7 +1014,9 @@ body.sheet-open{overflow:hidden}
 .tstep{display:grid;grid-template-columns:56px 1fr 56px;height:60px;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--card);margin-top:6px}
 .tstep .ts-b{border:0;background:var(--field);color:var(--muted);font:500 26px/1 var(--body);cursor:pointer}
 .tstep .ts-b:active{background:var(--field-3)}
-.tstep .ts-v{border:0;background:var(--card);color:var(--ink);font:300 30px/1 var(--body);font-variant-numeric:tabular-nums;cursor:text;display:flex;align-items:baseline;justify-content:center;gap:2px}
+.tstep .ts-v{border:0;background:var(--card);color:var(--ink);font:300 30px/1 var(--body);font-variant-numeric:tabular-nums;cursor:text;display:flex;align-items:center;justify-content:center;padding:0;height:100%}
+.tstep .ts-in{display:inline-flex;align-items:baseline;gap:2px;line-height:1}
+.tstep .ts-b{display:flex;align-items:center;justify-content:center;padding:0;height:100%}
 .tstep .ts-v small{font:600 13px var(--body);color:var(--muted);margin:0 6px 0 3px}
 .tstep.is-empty .ts-v{color:var(--faint)}
 .ts-chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -1455,7 +1457,7 @@ body.sheet-open{overflow:hidden}
           <span class="sub">Temps de vol aller</span>
           <div class="tstep" data-h="fuelCruiseH" data-m="fuelCruiseM" id="ts_go">
             <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
-            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></button>
+            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-in"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></span></button>
             <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
           </div>
           <div class="ts-chips" data-for="ts_go"><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
@@ -1472,7 +1474,7 @@ body.sheet-open{overflow:hidden}
               <span class="sub">Temps de vol retour</span>
               <div class="tstep" data-h="fuelBackH" data-m="fuelBackM" id="ts_back">
             <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
-            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></button>
+            <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-in"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></span></button>
             <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
           </div>
           <div class="ts-chips" data-for="ts_back"><button type="button" class="ts-same" data-same="1">Comme l'aller</button><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
