@@ -1077,6 +1077,29 @@ body[data-view="pick"]{padding-bottom:24px}
 /* Un calcul par trajet : plus de retour sans avitaillement */
 #fuelRetourRow{display:none!important}
 
+/* Carburant à bord : Plein / Temps volé / Litres + jauge */
+.fob-old{display:none!important}
+.fob-seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--field);border:1px solid var(--line);border-radius:12px;padding:3px}
+.fob-seg button{border:0;background:none;border-radius:9px;padding:8px 4px;color:var(--muted);font:700 14px/1.2 var(--body);cursor:pointer}
+.fob-seg button small{display:block;font:500 11px var(--body);margin-top:1px}
+.fob-seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px var(--line),inset 0 -2px 0 var(--yellow)}
+#fobSeg:not(:has(.on)){box-shadow:inset 0 0 0 1.5px var(--accent)}
+#fuelUsedWrap,#fuelCapWrap{border:0!important;padding:0!important;margin-top:12px;background:none;box-shadow:none}
+.fob-g{margin-top:12px}
+.fob-g[hidden]{display:none}
+.fob-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:6px}
+.fob-top b{font:300 30px/1 var(--body);font-variant-numeric:tabular-nums}
+.fob-top > div > span{font:600 13px var(--body);color:var(--muted)}
+.fob-top .r{text-align:right;font:600 12.5px/1.35 var(--body);color:var(--ink)}
+.fob-top .r span{display:block}
+.fob-top .r span + span{color:var(--muted);font-weight:500}
+.fob-bar{position:relative;height:16px;border-radius:8px;background:var(--field);border:1px solid var(--line);overflow:hidden}
+.fob-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--navy),#22357A);transition:width .3s}
+:root[data-theme="dark"] .fob-fill{background:linear-gradient(90deg,#3B53A6,var(--accent))}
+.fob-fill::after{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--yellow)}
+.fob-un{position:absolute;left:0;top:0;bottom:0;width:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 4px,transparent 4px 8px)}
+.fob-ax{display:flex;justify-content:space-between;font:600 11px var(--body);color:var(--muted);margin-top:4px}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1481,26 +1504,40 @@ body[data-view="pick"]{padding-bottom:24px}
       <div class="step-body">
         <div class="blk">
           <div class="blk-h"><span class="bt"><i>1</i>Carburant à bord</span></div>
-          <div class="toggle-group" id="fuelOnboardTg">
+          <div class="fob-seg" id="fobSeg" role="group" aria-label="Carburant à bord">
+            <button type="button" data-m="full">Plein<small id="fobFullL">— L</small></button><button type="button" data-m="used">Temps volé<small>depuis le plein</small></button><button type="button" data-m="liters">Litres<small>quantité connue</small></button>
+          </div>
+          <div class="toggle-group fob-old" id="fuelOnboardTg">
             <button id="fuelFullBtn" class="toggle-btn" type="button">Plein<small><span id="fuelFullL">—</span> L</small></button>
             <button id="fuelUsedBtn" class="toggle-btn" type="button">Autre quantité<small>temps de vol ou litres</small></button>
           </div>
           <div class="blk" id="fuelUsedWrap" hidden>
-            <span class="sub">Temps de vol depuis le dernier plein</span>
-            <div class="fuel-time">
+            <span class="sub">Temps de vol depuis le dernier plein (carnet de route)</span>
+            <div class="tstep" data-h="fuelUsedH" data-m="fuelUsedM" id="ts_used">
+              <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
+              <button type="button" class="ts-v" aria-label="Saisir le temps au clavier"><span class="ts-in"><span class="ts-h">0</span><small>h</small><span class="ts-mm">00</span><small>min</small></span></button>
+              <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
+            </div>
+            <div class="ts-chips" data-for="ts_used"><button type="button" data-min="15">0 h 15</button><button type="button" data-min="30">0 h 30</button><button type="button" data-min="45">0 h 45</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button></div>
+            <div class="fuel-time ts-raw" data-for="ts_used">
               <input id="fuelUsedH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures de vol depuis le dernier plein"/><span class="fuel-suffix">h</span>
               <input id="fuelUsedM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes de vol depuis le dernier plein"/><span class="fuel-suffix">min</span>
             </div>
-            <span class="note" id="fuelUsedRes">Indiquer le temps de vol depuis le dernier plein.</span>
-            <button type="button" class="btn-link wx-more" id="fuelLitersLink">Je connais la quantité en litres</button>
+            <span class="note fob-old" id="fuelUsedRes">Indiquer le temps de vol depuis le dernier plein.</span>
+            <button type="button" class="btn-link wx-more fob-old" id="fuelLitersLink">Je connais la quantité en litres</button>
           </div>
           <div class="blk" id="fuelCapWrap" hidden>
             <label class="mass-row"><span class="sub">Quantité à bord</span>
               <span class="unit-in"><input id="fuelCap" class="inp" type="number" min="1" step="1" inputmode="decimal" oninput="computeFuel()"/><span class="u">L</span></span>
             </label>
-            <button type="button" class="btn-link wx-more" id="fuelBackToTime">Calculer avec le temps de vol</button>
+            <button type="button" class="btn-link wx-more fob-old" id="fuelBackToTime">Calculer avec le temps de vol</button>
           </div>
-          <div class="onboard-line" id="fuelOnboardLine" hidden></div>
+          <div class="onboard-line fob-old" id="fuelOnboardLine" hidden></div>
+          <div class="fob-g" id="fobGauge" hidden>
+            <div class="fob-top"><div><b id="fobL">—</b><span> L à bord</span></div><div class="r"><span id="fobU">—</span><span id="fobA"></span></div></div>
+            <div class="fob-bar"><i class="fob-fill" id="fobFill"></i><i class="fob-un" id="fobUn"></i></div>
+            <div class="fob-ax"><span>0</span><span id="fobUnTxt"></span><span id="fobMax"></span></div>
+          </div>
           <div class="ac-line"><span id="fuelAcSumTxt">—</span><button type="button" class="btn-link sm" id="fuelAcEdit">Modifier</button></div>
           <div class="g2" id="fuelAcFields" hidden>
             <label class="f"><span class="lbl">Consommation (L/h)</span><input id="fuelConso" class="inp c" type="number" min="1" step="0.1" inputmode="decimal" oninput="computeFuel()"/></label>
@@ -7384,6 +7421,39 @@ if ('serviceWorker' in navigator) {
   { const _cfOne = window.computeFuel; window.computeFuel = function () {
       try { const rt = $id('fuelRoundtrip'); if (rt && rt.checked) { rt.checked = false; $id('fuelBackH').value = ''; $id('fuelBackM').value = ''; $id('fuelBackWrap').classList.remove('open'); $id('fuelRetourRow').classList.remove('is-on'); } } catch (e) {}
       return _cfOne.apply(this, arguments); }; }
+
+  /* ── Carburant à bord : 3 choix + jauge ── */
+  const fL = n => { const r = Math.round(n * 10) / 10; return r % 1 ? f1(r) : String(r); };
+  function fobPaint() {
+    const mode = typeof fuelMode !== 'undefined' ? fuelMode : null;
+    document.querySelectorAll('#fobSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
+    const fc = fullCap();
+    $id('fobFullL').textContent = (fc ? fL(fc) : '—') + ' L';
+    const cap = +val('fuelCap') || 0, un = +val('fuelUnusable') || 0;
+    const conso = (+val('fuelConso') || 0) * (window.__spatsFuelFactor ? window.__spatsFuelFactor() : 1);
+    const show = !!mode && cap > 0 && (mode !== 'used' || usedMin() > 0);
+    $id('fobGauge').hidden = !show;
+    if (!show) return;
+    const max = Math.max(fc || 0, cap), us = Math.max(0, cap - un);
+    $id('fobL').textContent = fL(cap);
+    $id('fobU').textContent = fL(us) + ' L utilisables';
+    $id('fobA').textContent = conso > 0 ? 'autonomie ' + fmtHM(us / conso * 60).replace('h', ' h ') : '';
+    $id('fobFill').style.width = (max ? Math.min(100, cap / max * 100) : 0) + '%';
+    $id('fobUn').style.width = (max ? Math.min(100, Math.min(un, cap) / max * 100) : 0) + '%';
+    $id('fobUnTxt').textContent = un ? 'inutilisable ' + fL(un) + ' L' : '';
+    $id('fobMax').textContent = max ? fL(max) + ' L' : '';
+  }
+  $id('fobSeg').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const m = b.dataset.m;
+    if (m === 'full') $id('fuelFullBtn').click();
+    else if (m === 'used') { if (fuelMode === 'liters') $id('fuelBackToTime').click(); else $id('fuelUsedBtn').click(); }
+    else if (m === 'liters') { if (fuelMode !== 'used') { fuelMode = 'used'; } $id('fuelLitersLink').click(); }
+    setTimeout(fobPaint, 0);
+  });
+  { const _cfF = window.computeFuel; window.computeFuel = function () { const x = _cfF.apply(this, arguments); try { fobPaint(); } catch (e) {} return x; }; }
+  $id('aircraftSel').addEventListener('change', () => setTimeout(fobPaint, 0));
+  setTimeout(() => { try { fobPaint(); } catch (e) {} }, 0);
   /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
   function rsvPaint() {
     const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
@@ -7416,6 +7486,7 @@ if ('serviceWorker' in navigator) {
   function renderFuel() {
     try { applyReserveRule(); } catch (e) { /* règles chargées plus loin au démarrage */ }
     try { rsvPaint(); } catch (e) {}
+    try { fobPaint(); } catch (e) {}
     // Réserve, options repliées
     const res = +val('fuelReserve') || 0, conso = (+val('fuelConso') || 0) * window.__spatsFuelFactor();
     $id('fuelRes30').classList.toggle('is-selected', res === 30);
