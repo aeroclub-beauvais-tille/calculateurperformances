@@ -1113,6 +1113,8 @@ body[data-view="pick"]{padding-bottom:24px}
 .ad-dd .it.act b{grid-column:1/3;font-weight:700;letter-spacing:0;color:var(--accent)}
 .ad-dd .none{padding:12px;font:500 13px var(--body);color:var(--muted)}
 
+.cgp-live .g3 .nw{white-space:nowrap}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1697,7 +1699,7 @@ body[data-view="pick"]{padding-bottom:24px}
       <div class="bar"><i id="cgBar"></i></div>
       <div class="cap" id="cgCap">—</div>
       <div class="g3">
-        <div><div class="k">Centrage</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
+        <div><div class="k">Bras de levier</div><div class="v"><span id="cgCg">—</span><small id="cgCgL">—</small></div></div>
         <div><div class="k">Zero fuel mass</div><div class="v"><span id="cgZf">—</span><small id="cgZfC">—</small></div></div>
         <div><div class="k">Landing mass</div><div class="v"><span id="cgLd">—</span><small id="cgLdC">—</small></div></div>
       </div>
@@ -6294,10 +6296,10 @@ if ('serviceWorker' in navigator) {
       ? 'Reste ' + cgF(marg) + ' kg avant la masse max · reportée dans Départ et Arrivée'
       : cgF(-marg) + ' kg au-dessus de la masse max';
     $id('cgCg').textContent = cgF(c.to[1], 3) + ' m';
-    $id('cgCgL').textContent = 'limites ' + cgF(cgFrontAt(a, Math.min(m, a.mtow)), 3) + ' – ' + cgF(a.aft, 3);
-    $id('cgZf').textContent = cgF(c.zf[0]) + ' kg'; $id('cgZfC').textContent = cgF(c.zf[1], 3) + ' m';
+    $id('cgCgL').innerHTML = 'limites<br><span class="nw">' + cgF(cgFrontAt(a, Math.min(m, a.mtow)), 3) + ' – ' + cgF(a.aft, 3) + '</span>';
+    $id('cgZf').textContent = cgF(c.zf[0]) + ' kg'; $id('cgZfC').innerHTML = 'bras de levier<br><span class="nw">' + cgF(c.zf[1], 3) + ' m</span>';
     $id('cgLd').textContent = ld ? cgF(ld.to[0]) + ' kg' : '—';
-    $id('cgLdC').textContent = ld ? cgF(ld.to[1], 3) + ' m' : 'temps de vol ?';
+    $id('cgLdC').innerHTML = ld ? 'bras de levier<br><span class="nw">' + cgF(ld.to[1], 3) + ' m</span>' : 'temps de vol ?';
     $id('cgLegL').hidden = !ld;
     $id('cgTripNote').textContent = ld
       ? 'Atterrissage : ' + cgF(e.burn, 1) + ' L consommés (mise en route + trip fuel de l\'onglet Carbu).'
@@ -6316,7 +6318,7 @@ if ('serviceWorker' in navigator) {
     if (e.ok && cg.seen) cgApply(rm);
     use.disabled = !e.ok;
     use.textContent = e.ok ? 'Continuer : Départ →' : 'Chargement à corriger';
-    $id('cgTbl').innerHTML = '<tr><th>Poste</th><th>kg</th><th>Bras</th><th>Moment</th></tr>' +
+    $id('cgTbl').innerHTML = '<tr><th>Poste</th><th>kg</th><th>Bras de levier</th><th>Moment</th></tr>' +
       c.items.map(i => '<tr><td>' + i[0] + '</td><td>' + cgF(i[1], 1) + '</td><td>' + cgF(i[2], 3) + '</td><td>' + cgF(i[1] * i[2], 1) + '</td></tr>').join('') +
       '<tr><td>Carburant (' + cg.fuel + ' L' + (a.unus ? ' − ' + a.unus + ' L déjà pesés' : '') + ')</td><td>' + cgF(c.fk, 1) + '</td><td>' + cgF(CG_ARM.fuel, 3) + '</td><td>' + cgF(c.fk * CG_ARM.fuel, 1) + '</td></tr>' +
       (e.aux ? '<tr><td>Réservoir supplémentaire (' + e.aux + ' L)</td><td>' + cgF(c.ak, 1) + '</td><td>' + cgF(a.aux, 3) + '</td><td>' + cgF(c.ak * a.aux, 1) + '</td></tr>' : '') +
