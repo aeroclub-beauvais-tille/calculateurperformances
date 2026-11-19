@@ -1063,11 +1063,13 @@ body[data-view="pick"]{padding-bottom:24px}
 .xm-cell{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:var(--field);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
 .xm-cell .k{font:700 10px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .xm-v{display:flex;align-items:baseline;justify-content:center;gap:3px;cursor:text}
-.xm-in{width:3.2ch;border:0;background:transparent;text-align:right;font:300 26px/1.2 var(--body);color:var(--ink);padding:0;-moz-appearance:textfield;font-variant-numeric:tabular-nums}
+.xm-in{width:2.3ch;border:0;background:transparent;text-align:center;font:300 26px/1.2 var(--body);color:var(--ink);padding:0;-moz-appearance:textfield;font-variant-numeric:tabular-nums}
 .xm-in::-webkit-outer-spin-button,.xm-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .xm-in::placeholder{color:var(--faint)}
 .xm-in:focus{outline:none;box-shadow:inset 0 -2px 0 var(--yellow)}
 .xm-v small{font:600 11px var(--body);color:var(--muted)}
+.xm-in.w3{width:3.3ch}
+.xm-v{width:100%}
 .xm-pm{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;margin-top:4px}
 .xm-pm button{height:32px;border-radius:6px;background:var(--card);border:1px solid var(--line-strong);color:var(--muted);font:500 18px/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .xm-pm button:active{background:var(--field-3)}
@@ -1564,11 +1566,11 @@ body[data-view="pick"]{padding-bottom:24px}
           <div class="xm" id="fuelMore">
             <div class="xm-hd"><span>À ajouter au vol</span><span>par 5 min</span></div>
             <div class="xm-g">
-            <div class="xm-cell"><span class="k">Mise en route</span><label class="xm-v"><input id="fuelStartup" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" value="10" oninput="computeFuel()" aria-label="Mise en route en minutes"/><small>min</small></label>
+            <div class="xm-cell"><span class="k">Mise en route</span><label class="xm-v"><input id="fuelStartup" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="10" oninput="computeFuel()" aria-label="Mise en route en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelStartup" data-d="-5" aria-label="Mise en route moins 5 minutes">−</button><button type="button" data-x="fuelStartup" data-d="5" aria-label="Mise en route plus 5 minutes">+</button></div></div>
-            <div class="xm-cell"><span class="k">Dégagement</span><label class="xm-v"><input id="fuelAlt" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" value="20" oninput="computeFuel()" aria-label="Dégagement en minutes"/><small>min</small></label>
+            <div class="xm-cell"><span class="k">Dégagement</span><label class="xm-v"><input id="fuelAlt" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="20" oninput="computeFuel()" aria-label="Dégagement en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelAlt" data-d="-5" aria-label="Dégagement moins 5 minutes">−</button><button type="button" data-x="fuelAlt" data-d="5" aria-label="Dégagement plus 5 minutes">+</button></div></div>
-            <div class="xm-cell"><span class="k">Extra fuel</span><label class="xm-v"><input id="fuelExtra" class="xm-in" type="number" min="0" inputmode="numeric" placeholder="0" oninput="computeFuel()" aria-label="Extra fuel en minutes"/><small>min</small></label>
+            <div class="xm-cell"><span class="k">Extra fuel</span><label class="xm-v"><input id="fuelExtra" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" oninput="computeFuel()" aria-label="Extra fuel en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelExtra" data-d="-5" aria-label="Extra fuel moins 5 minutes">−</button><button type="button" data-x="fuelExtra" data-d="5" aria-label="Extra fuel plus 5 minutes">+</button></div></div>
             </div>
             <input id="fuelReserve" type="hidden" value="45"/>
@@ -7343,7 +7345,22 @@ if ('serviceWorker' in navigator) {
     const b = e.target.closest('button[data-x]'); if (!b) return;
     const i = $id(b.dataset.x); i.value = Math.max(0, (parseInt(i.value, 10) || 0) + +b.dataset.d);
     i.dispatchEvent(new Event('input', { bubbles: true }));
+    xmPad();
   });
+  // Affichage sur deux chiffres (07 min), chiffre et unité centrés ensemble
+  function xmPad() {
+    document.querySelectorAll('.xm-in').forEach(i => {
+      if (document.activeElement !== i) { const n = parseInt(String(i.value).replace(/\D/g, ''), 10); i.value = isNaN(n) ? '' : String(n).padStart(2, '0'); }
+      i.classList.toggle('w3', String(i.value).length > 2);
+    });
+  }
+  document.querySelectorAll('.xm-in').forEach(i => {
+    i.addEventListener('input', () => { const v = i.value.replace(/\D/g, ''); if (v !== i.value) i.value = v; i.classList.toggle('w3', v.length > 2); });
+    i.addEventListener('blur', xmPad);
+    i.addEventListener('focus', () => setTimeout(() => { try { i.select(); } catch (e) {} }, 0));
+  });
+  { const _cfX = window.computeFuel; window.computeFuel = function () { const x = _cfX.apply(this, arguments); try { xmPad(); } catch (e) {} return x; }; }
+  xmPad();
   /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
   function rsvPaint() {
     const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
