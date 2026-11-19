@@ -1037,6 +1037,23 @@ body[data-view="pick"]{padding-bottom:24px}
 .ts-raw{display:none!important}
 .ts-raw.is-edit{display:flex!important;margin-top:8px}
 
+/* Réserve : type de vol puis réserve finale */
+.rsv-old{display:none!important}
+.rsv{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.rsv-dn{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:3px}
+.rsv-dn button{height:42px;border:0;border-radius:9px;background:none;color:var(--muted);font:700 14.5px var(--body);cursor:pointer}
+.rsv-dn button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px var(--line),inset 0 -2px 0 var(--yellow)}
+.rsv-dn button:disabled{cursor:default}
+.rsv-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rsv-row > b{font:700 15px var(--body)}
+.rsv-seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:minmax(86px,1fr);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:3px}
+.rsv-seg button{border:0;background:none;border-radius:8px;padding:6px 10px;color:var(--muted);font:700 14px/1.15 var(--body);cursor:pointer}
+.rsv-seg button small{display:block;font:500 11.5px var(--body);margin-top:1px}
+.rsv-seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px var(--line),inset 0 -2px 0 var(--yellow)}
+.rsv-seg button:disabled{opacity:.35;cursor:default}
+.rsv-foot{font:500 12.5px/1.4 var(--body);color:var(--muted)}
+.rsv-foot:empty{display:none}
+
 /* ═══════════ Impression (fiche PDF A4 — inchangée) ═══════════ */
 .step,.fiche{scroll-margin-top:80px}
 #printView{display:none}
@@ -1503,7 +1520,14 @@ body[data-view="pick"]{padding-bottom:24px}
               </div>
             </div>
           </div>
-          <div class="res-row">
+          <div class="rsv" id="rsv">
+            <span class="sub">Type de vol</span>
+            <div class="rsv-dn" role="group" aria-label="Type de vol"><button type="button" data-n="0"><span aria-hidden="true">☀</span> VFR jour</button><button type="button" data-n="1"><span aria-hidden="true">☾</span> VFR nuit</button></div>
+            <div class="rsv-row"><b>Réserve finale</b>
+              <div class="rsv-seg" role="group" aria-label="Réserve finale"><button type="button" data-r="30">30 min<small id="rsvL30">—</small></button><button type="button" data-r="45">45 min<small id="rsvL45">—</small></button></div></div>
+            <div class="rsv-foot" id="rsvFoot"></div>
+          </div>
+          <div class="res-row rsv-old">
             <span class="sub">Réserve finale</span>
             <div class="toggle-group res-tg" role="group" aria-label="Réserve finale">
               <button id="fuelRes30" class="toggle-btn" type="button" data-res="30">30 min</button>
@@ -1511,9 +1535,9 @@ body[data-view="pick"]{padding-bottom:24px}
             </div>
             <b class="res-fixed" id="fuelResFixed" hidden>45 min</b>
           </div>
-          <span class="note" id="fuelResTxt"></span>
-          <span class="note res-why" id="fuelResWhy" hidden></span>
-          <div class="fuel-switch-row night-row">
+          <span class="note rsv-old" id="fuelResTxt"></span>
+          <span class="note res-why rsv-old" id="fuelResWhy" hidden></span>
+          <div class="fuel-switch-row night-row rsv-old">
             <label class="fuel-switch-lbl" for="fuelNight">Vol VFR de nuit<small id="fuelNightSub"></small></label>
             <span class="fuel-switch"><input id="fuelNight" type="checkbox"/><span class="fuel-switch-track"></span></span>
           </div>
@@ -7287,8 +7311,39 @@ if ('serviceWorker' in navigator) {
     $id('fuelResWhy').hidden = !why && !acbt;
     $id('fuelResWhy').textContent = why === 'night' ? 'VFR de nuit : 45 min réglementaires.' : acbt ? '45 min par défaut pour les avions ACBT.' : '';
   }
+
+  /* ── Réserve : « Type de vol » (VFR jour / VFR nuit) puis 30 / 45 min ── */
+  function rsvPaint() {
+    const night = $id('fuelNight').checked, auto = $id('fuelNight').disabled;
+    const res = +val('fuelReserve') || 0;
+    const conso = (+val('fuelConso') || 0) * (window.__spatsFuelFactor ? window.__spatsFuelFactor() : 1);
+    document.querySelectorAll('#rsv .rsv-dn button').forEach(b => {
+      b.classList.toggle('on', (b.dataset.n === '1') === night);
+      b.disabled = auto && b.dataset.n === '0';
+    });
+    document.querySelectorAll('#rsv .rsv-seg button').forEach(b => {
+      b.classList.toggle('on', +b.dataset.r === res);
+      b.disabled = night && b.dataset.r === '30';
+    });
+    const L = m => conso > 0 ? frNum(Math.round(conso * m / 6) / 10) + ' L' : '— L';
+    $id('rsvL30').textContent = L(30); $id('rsvL45').textContent = L(45);
+    const ac = val('aircraftSel'), acbt = !!ac && clubOf(ac).k === 'acbt';
+    $id('rsvFoot').textContent = night
+      ? '☾ Réglementation VFR de nuit : 45 min' + (auto ? ' · vol après la nuit aéronautique' : '')
+      : acbt ? 'ⓘ 45 min par défaut sur les avions ACBT' : '';
+  }
+  $id('rsv').addEventListener('click', e => {
+    const n = e.target.closest('.rsv-dn button'), r = e.target.closest('.rsv-seg button');
+    if (n && !n.disabled) { const want = n.dataset.n === '1'; if ($id('fuelNight').checked !== want) $id('fuelNight').click(); }
+    if (r && !r.disabled) $id(r.dataset.r === '30' ? 'fuelRes30' : 'fuelRes45').click();
+    setTimeout(rsvPaint, 0);
+  });
+  { const _cfR = window.computeFuel; window.computeFuel = function () { const x = _cfR.apply(this, arguments); try { rsvPaint(); } catch (e) {} return x; }; }
+  $id('fuelNight').addEventListener('change', () => setTimeout(rsvPaint, 0));
+  setTimeout(() => { try { rsvPaint(); } catch (e) {} }, 0);
   function renderFuel() {
     try { applyReserveRule(); } catch (e) { /* règles chargées plus loin au démarrage */ }
+    try { rsvPaint(); } catch (e) {}
     // Réserve, options repliées
     const res = +val('fuelReserve') || 0, conso = (+val('fuelConso') || 0) * window.__spatsFuelFactor();
     $id('fuelRes30').classList.toggle('is-selected', res === 30);
