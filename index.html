@@ -6631,7 +6631,8 @@ if ('serviceWorker' in navigator) {
     for (let y = y0; y <= y1; y += 50) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(y) + '" y2="' + Y(y) + '" stroke="var(--line)"/>' + tx(L - 6, Y(y) + 4, y, 'end');
     s += tx(W - R, H - 4, 'bras de levier (m)', 'end', ' font-size="10"');
     const yb = Math.max(y0, a.empty - 10), p = a.front;
-    const poly = [[p[0][0], yb], [p[0][0], p[0][1]], [p[1][0], p[1][1]], [a.aft, a.mtow], [a.aft, yb]];
+    // Limite avant coupée au bas du graphique (évite un trait qui sort de l'enveloppe quand la limite commence sous la masse à vide)
+    const poly = [[cgFrontAt(a, yb), yb]].concat(p.filter(q => q[1] > yb && q[1] < a.mtow), [[cgFrontAt(a, a.mtow), a.mtow], [a.aft, a.mtow], [a.aft, yb]]);
     s += '<polygon points="' + poly.map(q => X(q[0]) + ',' + Y(q[1])).join(' ') + '" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>';
     s += '<line x1="' + X(x0) + '" x2="' + X(x1) + '" y1="' + Y(a.mtow) + '" y2="' + Y(a.mtow) + '" stroke="var(--err)" stroke-dasharray="4 4" opacity=".6"/>';
     s += '<text x="' + (X(x0) + 4) + '" y="' + (Y(a.mtow) - 5) + '" font-size="10" fill="var(--err)" font-family="Manrope,sans-serif" font-weight="700">max ' + a.mtow + ' kg</text>';
