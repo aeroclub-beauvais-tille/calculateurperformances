@@ -86,6 +86,7 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
 .v{font:800 10.5px var(--body);letter-spacing:.04em;border-radius:4px;padding:3px 6px;background:var(--ok-bg);color:var(--ok-text)}
 .v.bad{background:var(--err-bg);color:var(--err-text)}
 .v.none{background:var(--field);color:var(--faint)}
+.keep{font:600 12px/1.4 var(--body);color:var(--muted);text-align:center;margin:22px 10px 0}
 .empty{padding:30px 10px;text-align:center;color:var(--muted);font:600 14px var(--body)}
 /* Connexion */
 .login{max-width:420px;margin:40px auto 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;box-shadow:var(--shadow)}
@@ -153,6 +154,7 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
       <input id="q" type="search" placeholder="Pilote, avion, terrain, n° de fiche" aria-label="Rechercher"></label>
     <div class="count" id="count"></div>
     <div id="rows"></div>
+    <p class="keep">Les fiches de plus de 6 mois sont supprimées automatiquement. Exporter le CSV pour les garder.</p>
   </div>
 </main>
 <div class="sheet-bg" id="sheetBg" hidden></div>

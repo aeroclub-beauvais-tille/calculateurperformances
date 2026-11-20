@@ -36,6 +36,18 @@ async function ensureTable(db) {
   tableReady = true;
 }
 
+/* Purge automatique : les fiches calculées il y a plus de 6 mois sont supprimées.
+   Pas de tâche planifiée sur Pages : la purge se fait au passage (envoi ou consultation), au plus une fois par heure. */
+const CONSERVATION_MOIS = 6;
+let lastPurge = 0;
+async function purge(db) {
+  const now = Date.now();
+  if (now - lastPurge < 3600 * 1000) return;
+  lastPurge = now;
+  const limite = new Date(now); limite.setMonth(limite.getMonth() - CONSERVATION_MOIS);
+  try { await db.prepare('DELETE FROM fiches WHERE created_at < ?').bind(limite.toISOString()).run(); } catch (e) {}
+}
+
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), {
   status,
   headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
@@ -110,6 +122,7 @@ async function recevoir({ request, env }) {
   const hashOk = (await sha256Hex(canon(c))) === hash ? 1 : 0;
 
   await ensureTable(env.DB);
+  await purge(env.DB);
   const received = new Date().toISOString();
   await env.DB.prepare(`INSERT OR IGNORE INTO fiches
       (id, created_at, received_at, pilot, aircraft, dep_icao, arr_icao, dep_verdict, arr_verdict, fuel_verdict, hash, hash_ok, payload)
@@ -131,6 +144,7 @@ async function consulter({ request, env }) {
   if (!env.ARCHIVE_PASSWORD) return json({ ok: false, error: 'Mot de passe des archives non défini (ARCHIVE_PASSWORD).' }, 503);
   if (!checkPassword(request, env)) return json({ ok: false, error: 'Mot de passe incorrect.' }, 401);
   await ensureTable(env.DB);
+  await purge(env.DB);
 
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
