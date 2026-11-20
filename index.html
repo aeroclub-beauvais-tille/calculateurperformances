@@ -9147,7 +9147,9 @@ if ('serviceWorker' in navigator) {
     let file = null;
     try { file = new File([blob], name, { type: 'application/pdf' }); } catch (e) {}
     const mobile = window.matchMedia('(pointer:coarse)').matches;
-    if (file && mobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+    // Android : téléchargement direct (dossier Téléchargements, visible dans Fichiers). iPhone : feuille de partage (« Enregistrer dans Fichiers »).
+    const android = /Android/i.test(navigator.userAgent);
+    if (file && mobile && !android && navigator.canShare && navigator.canShare({ files: [file] })) {
       return navigator.share({ files: [file], title: name }).then(() => 'shared')
         .catch(e => (e && e.name === 'AbortError') ? 'cancel' : download(blob, name));
     }
@@ -9199,7 +9201,7 @@ if ('serviceWorker' in navigator) {
     const sharing = shareOrDownload(bytes, fileName(rec.data));
     const stored = isNew ? putRec(rec).then(() => { requestPersist(); refreshBadge(); try { renderTabList(); } catch (e) {} }) : Promise.resolve();
     Promise.all([sharing, stored]).then(([how]) => {
-      const where = how === 'download' ? 'PDF téléchargé' : how === 'shared' ? 'PDF partagé' : 'Partage annulé';
+      const where = how === 'download' ? (/Android/i.test(navigator.userAgent) ? 'PDF dans Téléchargements' : 'PDF téléchargé') : how === 'shared' ? 'PDF partagé' : 'Partage annulé';
       toast((isNew ? 'Fiche enregistrée sur l\'appareil · ' : 'Même fiche · ') + where + '.', 'ok');
       setSaved(true);
       syncPending();
