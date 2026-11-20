@@ -1255,6 +1255,13 @@ body[data-view="pick"]{padding-bottom:24px}
 .gpx-kt{display:inline-flex;align-items:center;gap:4px;margin-left:4px}
 .gpx-kt input{width:58px;height:30px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);color:var(--ink);font:700 14px var(--body);text-align:center}
 .gpx-err{color:var(--warn)}
+
+/* Balayage entre onglets */
+@keyframes swl{from{transform:translateX(36px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes swr{from{transform:translateX(-36px);opacity:.4}to{transform:none;opacity:1}}
+main.app.swipe-l{animation:swl .24s ease-out}
+main.app.swipe-r{animation:swr .24s ease-out}
+@media (prefers-reduced-motion:reduce){main.app.swipe-l,main.app.swipe-r{animation:none}}
 </style>
 </head>
 <body>
@@ -8461,6 +8468,38 @@ if ('serviceWorker' in navigator) {
     m.querySelector('.draft-go').addEventListener('click', () => { m.remove(); lastEdit = Date.now(); draftReady = true; draftRestore(d); });
     m.querySelector('.draft-new').addEventListener('click', () => { m.remove(); window.__draftClear(); draftReady = true; });
   }
+  /* ═══════════ Balayage horizontal : onglet précédent / suivant ═══════════ */
+  (function () {
+    const app = document.querySelector('main.app');
+    if (!app) return;
+    let sx = 0, sy = 0, st = 0, ok = false;
+    const NOSWIPE = 'input[type=range],textarea,.eta-strip,.acpick,.ad-dd,[data-noswipe],.cgp-env,svg.cg-env,.gpx-res';
+    document.addEventListener('touchstart', e => {
+      ok = false;
+      if (e.touches.length !== 1 || pickOn || document.querySelector('.draft-modal, .modal-backdrop:not([hidden]), dialog[open]')) return;
+      const t = e.target;
+      if (t.closest && t.closest(NOSWIPE)) return;
+      if (t === document.activeElement && /INPUT|SELECT/.test(t.tagName)) return;
+      // éléments qui défilent horizontalement
+      for (let el = t; el && el !== document.body; el = el.parentElement) { if (el.scrollWidth > el.clientWidth + 4 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return; }
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); ok = true;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      if (!ok) return; ok = false;
+      const c = e.changedTouches[0], dx = c.clientX - sx, dy = c.clientY - sy;
+      if (Date.now() - st > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+      const tabs = [...document.querySelectorAll('#tabbar [data-tab]')].filter(b => !b.hidden && b.dataset.tab !== 'ac').map(b => b.dataset.tab);
+      const cur = document.body.dataset.view, i = tabs.indexOf(cur);
+      if (i < 0) return;
+      const j = dx < 0 ? i + 1 : i - 1;
+      if (j < 0 || j >= tabs.length) return;
+      goTab(tabs[j]);
+      app.classList.remove('swipe-l', 'swipe-r'); void app.offsetWidth;
+      app.classList.add(dx < 0 ? 'swipe-l' : 'swipe-r');
+      setTimeout(() => app.classList.remove('swipe-l', 'swipe-r'), 260);
+    }, { passive: true });
+  })();
+
   /* ═══════════ Import d'une route GPX (SDVFR, SkyDemon, Garmin…) ═══════════
      Route sans heures : distance totale ÷ vitesse de croisière → temps de vol (sans vent).
      Trace avec heures : temps réellement enregistré. Départ / arrivée reconnus si ce sont des terrains. */
