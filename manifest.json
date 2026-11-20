@@ -24,5 +24,36 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "share_target": {
+    "action": "/share-gpx",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "files": [
+        {
+          "name": "gpx",
+          "accept": [
+            "application/gpx+xml",
+            ".gpx",
+            "application/xml",
+            "text/xml",
+            "application/octet-stream"
+          ]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/gpx+xml": [
+          ".gpx"
+        ]
+      }
+    }
   ]
 }

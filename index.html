@@ -8572,11 +8572,9 @@ if ('serviceWorker' in navigator) {
       if (k) k.addEventListener('change', () => { const v = Math.round(+k.value); if (v >= 40 && v <= 250) { ktPut(val('aircraftSel'), v); apply(); } });
       res.querySelector('.gpx-x').addEventListener('click', () => { res.hidden = true; route = null; });
     }
-    fileIn.addEventListener('change', async () => {
-      const f = fileIn.files && fileIn.files[0]; fileIn.value = '';
-      if (!f) return;
+    async function importText(txt) {
       try {
-        route = parse(await f.text());
+        route = parse(txt);
         apply();
         if (route.dep && route.dep !== val('depIcao').toUpperCase()) pickAd('dep', route.dep);
         if (route.arr && route.arr !== val('arrIcao').toUpperCase()) setTimeout(() => pickAd('arr', route.arr), 200);
@@ -8585,7 +8583,26 @@ if ('serviceWorker' in navigator) {
         res.innerHTML = '<div class="gpx-l1 gpx-err">' + escH(e.message || 'Import impossible') + '<button type="button" class="gpx-x" aria-label="Fermer">×</button></div>';
         res.querySelector('.gpx-x').addEventListener('click', () => { res.hidden = true; });
       }
+    }
+    fileIn.addEventListener('change', async () => {
+      const f = fileIn.files && fileIn.files[0]; fileIn.value = '';
+      if (f) importText(await f.text());
     });
+    // Fichier reçu par « Partager » (Android) ou « Ouvrir avec » (ordinateur) depuis SDVFR, SkyDemon…
+    const incoming = async txt => {
+      if (!txt) return;
+      const go = () => { try { goTab('fuel'); } catch (e) {} importText(txt); };
+      if (val('aircraftSel')) go();
+      else { const once = () => { $id('aircraftSel').removeEventListener('change', once); setTimeout(go, 200); }; $id('aircraftSel').addEventListener('change', once); }
+    };
+    window.__gpxImport = incoming;
+    if (/[?&]gpx=partage/.test(location.search)) {
+      history.replaceState(null, '', location.pathname);
+      (async () => { try { const c = await caches.open('acbt-share'); const r = await c.match('/shared-gpx'); if (r) { const t = await r.text(); await c.delete('/shared-gpx'); incoming(t); } } catch (e) {} })();
+    }
+    if ('launchQueue' in window) {
+      window.launchQueue.setConsumer(async p => { for (const h of (p.files || [])) { try { incoming(await (await h.getFile()).text()); } catch (e) {} break; } });
+    }
     $id('aircraftSel').addEventListener('change', () => { if (route && route.rec == null) setTimeout(apply, 0); });
   })();
 
