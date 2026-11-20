@@ -1259,9 +1259,9 @@ body[data-view="pick"]{padding-bottom:24px}
 /* Balayage entre onglets */
 @keyframes swl{from{transform:translateX(36px);opacity:.4}to{transform:none;opacity:1}}
 @keyframes swr{from{transform:translateX(-36px);opacity:.4}to{transform:none;opacity:1}}
-main.app.swipe-l{animation:swl .24s ease-out}
-main.app.swipe-r{animation:swr .24s ease-out}
-@media (prefers-reduced-motion:reduce){main.app.swipe-l,main.app.swipe-r{animation:none}}
+main.app.swipe-l>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swl .24s ease-out}
+main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-out}
+@media (prefers-reduced-motion:reduce){main.app>:is(#flow,#cgPane,#fiche,#ficheHist){animation:none!important}}
 </style>
 </head>
 <body>
