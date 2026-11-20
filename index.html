@@ -1240,6 +1240,21 @@ body[data-view="pick"]{padding-bottom:24px}
 .draft-b button{height:48px;border-radius:10px;font:700 15px var(--body);cursor:pointer}
 .draft-new{background:var(--card);color:var(--ink);border:1px solid var(--line-strong)}
 .draft-go{background:var(--btn-pri);color:var(--on-navy);border:1px solid var(--btn-pri)}
+
+/* Import GPX : lien discret sous le temps de vol */
+.gpx-wrap{margin-top:10px}
+.gpx-link{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--body);color:var(--muted);cursor:pointer;padding:4px 0}
+.gpx-link svg{width:16px;height:16px}
+.gpx-link:hover{color:var(--ink)}
+.gpx-res{margin-top:6px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font:500 13px var(--body);color:var(--ink)}
+.gpx-l1{display:flex;align-items:center;gap:6px}
+.gpx-l1 b{font-weight:800}
+.gpx-x{margin-left:auto;background:none;border:0;font:500 20px/1 var(--body);color:var(--muted);cursor:pointer;padding:0 2px}
+.gpx-l2{margin-top:6px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.gpx-l2 b{color:var(--ink);font-weight:800}
+.gpx-kt{display:inline-flex;align-items:center;gap:4px;margin-left:4px}
+.gpx-kt input{width:58px;height:30px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);color:var(--ink);font:700 14px var(--body);text-align:center}
+.gpx-err{color:var(--warn)}
 </style>
 </head>
 <body>
@@ -1642,6 +1657,10 @@ body[data-view="pick"]{padding-bottom:24px}
             <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
           </div>
           <div class="ts-chips" data-for="ts_go"><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
+          <div class="gpx-wrap">
+            <label class="gpx-link"><input type="file" id="gpxFile" hidden/><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17.2c5-1 2.5-7.5 8-9.6"/></svg>Importer une route GPX</label>
+            <div class="gpx-res" id="gpxRes" hidden></div>
+          </div>
           <div class="fuel-time ts-raw" data-for="ts_go">
             <input id="fuelCruiseH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures aller" oninput="computeFuel()"/><span class="fuel-suffix">h</span>
             <input id="fuelCruiseM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes aller" oninput="computeFuel()"/><span class="fuel-suffix">min</span>
@@ -8445,6 +8464,90 @@ if ('serviceWorker' in navigator) {
     m.querySelector('.draft-go').addEventListener('click', () => { m.remove(); lastEdit = Date.now(); draftReady = true; draftRestore(d); });
     m.querySelector('.draft-new').addEventListener('click', () => { m.remove(); window.__draftClear(); draftReady = true; });
   }
+  /* ═══════════ Import d'une route GPX (SDVFR, SkyDemon, Garmin…) ═══════════
+     Route sans heures : distance totale ÷ vitesse de croisière → temps de vol (sans vent).
+     Trace avec heures : temps réellement enregistré. Départ / arrivée reconnus si ce sont des terrains. */
+  (function () {
+    const fileIn = $id('gpxFile'), res = $id('gpxRes');
+    if (!fileIn) return;
+    const KT_KEY = 'acbt-gpx-kt';
+    const ktDefault = ac => {
+      const t = ((CG_DATA[ac] && CG_DATA[ac].type) || (typeof _DATA !== 'undefined' && _DATA[ac] && (_DATA[ac].type || _DATA[ac].profil)) || '').toUpperCase();
+      if (/315/.test(t)) return 95;
+      if (/AT01/.test(t)) return 105;
+      if (/140/.test(t)) return 110;
+      if (/160/.test(t)) return 115;
+      return 100;
+    };
+    const ktGet = ac => { try { const m = JSON.parse(localStorage.getItem(KT_KEY) || '{}'); if (m[ac]) return m[ac]; } catch (e) {} return ktDefault(ac); };
+    const ktPut = (ac, v) => { try { const m = JSON.parse(localStorage.getItem(KT_KEY) || '{}'); m[ac] = v; localStorage.setItem(KT_KEY, JSON.stringify(m)); } catch (e) {} };
+    let route = null;
+    const adOf = pt => {
+      const nm = (pt.name || '').toUpperCase();
+      const m = nm.match(/\b[A-Z]{2}[A-Z0-9]{2}\b/g) || [];
+      for (const c of m) if (AD_IDX[c]) return c;
+      let best = null, bd = 3;
+      AD_FR.forEach(r => { const d = distNm(pt.lat, pt.lon, r[2], r[3]); if (d < bd) { bd = d; best = r[0]; } });
+      return best;
+    };
+    function parse(txt) {
+      const doc = new DOMParser().parseFromString(txt, 'application/xml');
+      if (doc.querySelector('parsererror')) throw new Error('Fichier illisible');
+      const grab = tag => [...doc.getElementsByTagName(tag)].map(e => ({
+        lat: parseFloat(e.getAttribute('lat')), lon: parseFloat(e.getAttribute('lon')),
+        name: (e.getElementsByTagName('name')[0] || {}).textContent || '',
+        time: (e.getElementsByTagName('time')[0] || {}).textContent || ''
+      })).filter(p => isFinite(p.lat) && isFinite(p.lon));
+      let pts = grab('rtept'), kind = 'route';
+      if (pts.length < 2) { pts = grab('trkpt'); kind = 'trace'; }
+      if (pts.length < 2) { pts = grab('wpt'); kind = 'route'; }
+      if (pts.length < 2) throw new Error('Aucune route trouvée dans le fichier');
+      let nm = 0; for (let i = 1; i < pts.length; i++) nm += distNm(pts[i - 1].lat, pts[i - 1].lon, pts[i].lat, pts[i].lon);
+      let rec = null;
+      const t0 = Date.parse(pts[0].time), t1 = Date.parse(pts[pts.length - 1].time);
+      if (kind === 'trace' && isFinite(t0) && isFinite(t1) && t1 > t0) rec = Math.round((t1 - t0) / 60000);
+      return { pts, nm, rec, dep: adOf(pts[0]), arr: adOf(pts[pts.length - 1]), n: pts.length };
+    }
+    const hm = m => Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
+    function apply() {
+      if (!route) return;
+      const ac = val('aircraftSel');
+      let min;
+      if (route.rec != null) min = route.rec;
+      else { const kt = +($id('gpxKt') && $id('gpxKt').value) || ktGet(ac); min = Math.ceil(route.nm / kt * 60); }
+      tsSet($id('ts_go'), min);
+      paint(min);
+    }
+    function paint(min) {
+      const ac = val('aircraftSel');
+      const rt = (route.dep || '?') + ' → ' + (route.arr || '?');
+      res.hidden = false;
+      res.innerHTML = '<div class="gpx-l1"><b>' + escH(rt) + '</b> · ' + Math.round(route.nm) + ' NM' +
+        '<button type="button" class="gpx-x" aria-label="Fermer">×</button></div>' +
+        (route.rec != null
+          ? '<div class="gpx-l2">Temps enregistré dans la trace : <b>' + hm(min) + '</b></div>'
+          : '<div class="gpx-l2"><label>Croisière <span class="gpx-kt"><input id="gpxKt" type="number" inputmode="numeric" value="' + ktGet(ac) + '"/>kt</span></label> → <b>' + hm(min) + '</b> sans vent</div>');
+      const k = $id('gpxKt');
+      if (k) k.addEventListener('change', () => { const v = Math.round(+k.value); if (v >= 40 && v <= 250) { ktPut(val('aircraftSel'), v); apply(); } });
+      res.querySelector('.gpx-x').addEventListener('click', () => { res.hidden = true; route = null; });
+    }
+    fileIn.addEventListener('change', async () => {
+      const f = fileIn.files && fileIn.files[0]; fileIn.value = '';
+      if (!f) return;
+      try {
+        route = parse(await f.text());
+        apply();
+        if (route.dep && route.dep !== val('depIcao').toUpperCase()) pickAd('dep', route.dep);
+        if (route.arr && route.arr !== val('arrIcao').toUpperCase()) setTimeout(() => pickAd('arr', route.arr), 200);
+      } catch (e) {
+        route = null; res.hidden = false;
+        res.innerHTML = '<div class="gpx-l1 gpx-err">' + escH(e.message || 'Import impossible') + '<button type="button" class="gpx-x" aria-label="Fermer">×</button></div>';
+        res.querySelector('.gpx-x').addEventListener('click', () => { res.hidden = true; });
+      }
+    });
+    $id('aircraftSel').addEventListener('change', () => { if (route && route.rec == null) setTimeout(apply, 0); });
+  })();
+
   (function () {
     let d = null;
     try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) {}
