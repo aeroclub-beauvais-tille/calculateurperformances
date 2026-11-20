@@ -1242,11 +1242,11 @@ body[data-view="pick"]{padding-bottom:24px}
 .draft-go{background:var(--btn-pri);color:var(--on-navy);border:1px solid var(--btn-pri)}
 
 /* Import GPX : lien discret sous le temps de vol */
-.gpx-wrap{margin-top:10px}
-.gpx-link{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--body);color:var(--muted);cursor:pointer;padding:4px 0}
-.gpx-link svg{width:16px;height:16px}
-.gpx-link:hover{color:var(--ink)}
-.gpx-res{margin-top:6px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font:500 13px var(--body);color:var(--ink)}
+.gpx-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gpx-pill{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--ink);color:var(--ink);border-radius:20px;padding:4px 11px;font:800 12.5px var(--body);letter-spacing:.04em;cursor:pointer;flex:0 0 auto}
+.gpx-pill svg{width:15px;height:15px}
+.gpx-pill:active{background:var(--field)}
+.gpx-res{margin:0 0 14px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font:500 13px var(--body);color:var(--ink)}
 .gpx-l1{display:flex;align-items:center;gap:6px}
 .gpx-l1 b{font-weight:800}
 .gpx-x{margin-left:auto;background:none;border:0;font:500 20px/1 var(--body);color:var(--muted);cursor:pointer;padding:0 2px}
@@ -1649,7 +1649,8 @@ body[data-view="pick"]{padding-bottom:24px}
         </div>
 
         <div class="blk">
-          <div class="blk-h"><span class="bt"><i>2</i>Le vol</span></div>
+          <div class="blk-h gpx-h"><span class="bt"><i>2</i>Le vol</span><label class="gpx-pill" title="Importer une route GPX (SDVFR, SkyDemon…)"><input type="file" id="gpxFile" accept=".gpx,application/gpx+xml,application/xml,text/xml,application/octet-stream" hidden/><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17.2c5-1 2.5-7.5 8-9.6"/></svg>GPX</label></div>
+          <div class="gpx-res" id="gpxRes" hidden></div>
           <span class="sub">Temps de vol</span>
           <div class="tstep" data-h="fuelCruiseH" data-m="fuelCruiseM" id="ts_go">
             <button type="button" class="ts-b" data-d="-5" aria-label="Moins 5 minutes">−</button>
@@ -1657,10 +1658,6 @@ body[data-view="pick"]{padding-bottom:24px}
             <button type="button" class="ts-b" data-d="5" aria-label="Plus 5 minutes">+</button>
           </div>
           <div class="ts-chips" data-for="ts_go"><button type="button" data-min="30">30 min</button><button type="button" data-min="45">45 min</button><button type="button" data-min="60">1 h</button><button type="button" data-min="90">1 h 30</button><button type="button" data-min="120">2 h</button></div>
-          <div class="gpx-wrap">
-            <label class="gpx-link"><input type="file" id="gpxFile" accept=".gpx,application/gpx+xml,application/xml,text/xml,application/octet-stream" hidden/><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17.2c5-1 2.5-7.5 8-9.6"/></svg>Importer une route GPX</label>
-            <div class="gpx-res" id="gpxRes" hidden></div>
-          </div>
           <div class="fuel-time ts-raw" data-for="ts_go">
             <input id="fuelCruiseH" class="inp" type="number" min="0" inputmode="numeric" aria-label="Heures aller" oninput="computeFuel()"/><span class="fuel-suffix">h</span>
             <input id="fuelCruiseM" class="inp" type="number" min="0" max="59" inputmode="numeric" aria-label="Minutes aller" oninput="computeFuel()"/><span class="fuel-suffix">min</span>
