@@ -1259,6 +1259,8 @@ body[data-view="pick"]{padding-bottom:24px}
 /* Balayage entre onglets */
 @keyframes swl{from{transform:translateX(36px);opacity:.4}to{transform:none;opacity:1}}
 @keyframes swr{from{transform:translateX(-36px);opacity:.4}to{transform:none;opacity:1}}
+main.app{overflow-x:clip}
+html,body{overflow-x:clip;touch-action:pan-y pinch-zoom}
 main.app.swipe-l>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swl .24s ease-out}
 main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-out}
 @media (prefers-reduced-motion:reduce){main.app>:is(#flow,#cgPane,#fiche,#ficheHist){animation:none!important}}
