@@ -6280,7 +6280,7 @@ if ('serviceWorker' in navigator) {
   const CG_ROWS = [['pil', 'Pilote'], ['cop', 'Passager avant'], ['ar', 'Passagers arrière'], ['bag', 'Bagages']];
   const CG_KEY = 'acbt-cg';
   const cg = { pil: 80, cop: 0, ar: 0, bag: 0, fuel: null, aux: false, auxL: 0, ac: null, used: null, seen: false };   // seen : l'onglet Centrage a été ouvert pour cet avion
-  try { const sv = JSON.parse(localStorage.getItem(CG_KEY) || 'null'); if (sv && +sv.pil > 0) cg.pil = +sv.pil; } catch (e) {}
+  try { localStorage.removeItem(CG_KEY); } catch (e) {}   // pilote : 80 kg par défaut à chaque nouveau calcul
   const cgF = (n, d = 0) => (+n).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
   const cgAc = () => CG_DATA[val('aircraftSel')] || null;
   function cgFrontAt(a, m) {
@@ -6328,7 +6328,7 @@ if ('serviceWorker' in navigator) {
     return { a, L, aux, c, ld, burn, bagBad, okT, okZ, okL, ok: okT && okZ && okL && !bagBad };
   }
   window.__cgState = () => { try { const e = cgEval(); if (!e || cg.used == null) return null; return e.ok ? 'ok' : 'bad'; } catch (x) { return null; } };
-  function cgSave() { try { localStorage.setItem(CG_KEY, JSON.stringify({ pil: cg.pil })); } catch (e) {} }
+  function cgSave() {}
 
   $id('cgRows').innerHTML = CG_ROWS.map(([k, l]) =>
     '<div class="cgp-row"><div class="rl"><b>' + l + '</b><span id="cgS_' + k + '">bras ' + cgF(CG_ARM[k], 2) + ' m</span></div>' +
