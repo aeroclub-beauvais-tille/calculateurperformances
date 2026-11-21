@@ -599,7 +599,7 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
       h += '<button type="button" class="it' + (bad ? ' bad' : '') + '" data-id="' + esc(f.id) + '">' +
         '<div class="h">' + esc(f.pilot || 'Pilote non indiqué') + '<span>' + hhmm(d) + '</span></div>' +
         '<div class="s">' + esc(f.aircraft || '') + ' · ' + esc(route) + '</div>' +
-        '<div class="vs">' + vchip('DÉP', f.dep_verdict) + vchip('ARR', f.arr_verdict) + vchip('CARB', f.fuel_verdict) + '</div></button>';
+        '<div class="vs">' + vchip('DÉP', f.dep_verdict) + vchip('ARR', f.arr_verdict) + vchip('FUEL', f.fuel_verdict) + '</div></button>';
     });
     $('rows').innerHTML = h + '</div>';
   }
