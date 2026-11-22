@@ -1,31 +1,78 @@
 name: Republier le site du club
 
-# Perfs est intégrée dans l'espace membres du site du club (dépôt acbt_horizon, /membre/perfs/).
-# À chaque modification de Perfs, on demande à Cloudflare de republier ce site pour qu'il prenne la nouvelle version.
-# Il faut la variable secrète CLOUDFLARE_DEPLOY_HOOK (Settings > Secrets and variables > Actions) :
-# l'adresse du « Deploy hook » du projet Cloudflare Pages du site (la même que dans acbt_horizon).
-# CLOUDFLARE_DEPLOY_HOOK_PREPA (facultatif) : Deploy hook de l'ancien site prepa-vols-acbt.pages.dev, gardé en parallèle.
+# Perfs est intégrée dans l'espace membres du site du club (dépôt acbt, https://acbt60.fr/membre/perfs/).
+# À chaque modification de Perfs, on reconstruit le site du club (qui récupère la dernière version de Perfs)
+# et on l'envoie dans le projet Cloudflare Pages « acbt60 ».
+#
+# Secrets (au niveau de l'organisation aeroclub-beauvais-tille, partagés avec le dépôt acbt) :
+#  - CLOUDFLARE_API_TOKEN et CLOUDFLARE_ACCOUNT_ID : publication du site du club ;
+#  - CLOUDFLARE_DEPLOY_HOOK_PREPA (facultatif) : Deploy hook de l'ancien site prepa-vols-acbt.pages.dev, gardé en parallèle.
+# Tant que CLOUDFLARE_API_TOKEN n'est pas réglé, l'ancien Deploy hook CLOUDFLARE_DEPLOY_HOOK est appelé à la place.
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
+
+concurrency:
+  group: republier-site
+  cancel-in-progress: true
 
 jobs:
-  republier:
+  prepa:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Demander une republication à Cloudflare
+      - name: Republier prepa-vols-acbt.pages.dev
         env:
-          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
           HOOK_PREPA: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_PREPA }}
         run: |
-          ok=0
-          for nom in HOOK HOOK_PREPA; do
-            url="${!nom}"
-            if [ -z "$url" ]; then echo "::notice::$nom n'est pas réglé : ignoré."; continue; fi
-            curl -fsS -X POST "$url" > /dev/null && echo "$nom : republication demandée." || ok=1
-          done
-          exit $ok
+          if [ -z "$HOOK_PREPA" ]; then echo "::notice::CLOUDFLARE_DEPLOY_HOOK_PREPA n'est pas réglé : ignoré."; exit 0; fi
+          curl -fsS -X POST "$HOOK_PREPA" > /dev/null && echo "prepa-vols-acbt : republication demandée."
+
+  site-du-club:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+    steps:
+      - name: Choisir la méthode
+        id: mode
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "mode=wrangler" >> "$GITHUB_OUTPUT"
+          elif [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK" > /dev/null && echo "Ancien Deploy hook : republication demandée."
+            echo "mode=fait" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Aucun réglage de publication : rien à faire."
+            echo "mode=fait" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.mode.outputs.mode == 'wrangler'
+        with:
+          repository: aeroclub-beauvais-tille/acbt
+          ref: main
+      - uses: actions/setup-node@v4
+        if: steps.mode.outputs.mode == 'wrangler'
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        if: steps.mode.outputs.mode == 'wrangler'
+      - name: Construire le site du club (avec la dernière version de Perfs)
+        if: steps.mode.outputs.mode == 'wrangler'
+        run: npm run build
+        env:
+          CF_PAGES: '1'
+          SITE_URL: https://acbt60.fr
+          AVWX_TOKEN: ${{ secrets.AVWX_TOKEN }}
+      - name: Envoyer dans le projet Cloudflare « acbt60 »
+        if: steps.mode.outputs.mode == 'wrangler'
+        run: |
+          SHA=$(git rev-parse HEAD)
+          npx --yes wrangler@4 pages deploy dist --project-name=acbt60 --branch=main --commit-hash="$SHA" --commit-message="acbt $SHA (Perfs ${GITHUB_SHA::7})" --commit-dirty=true
