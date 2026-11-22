@@ -1717,7 +1717,7 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
           <button type="button" class="btn-link wx-more" id="fuelMoreLink">+ Mise en route, dégagement, extra fuel</button>
           <div class="xm" id="fuelMore">
             <div class="xm-g">
-            <div class="xm-cell"><span class="k">Mise en route</span><label class="xm-v"><input id="fuelStartup" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="10" oninput="computeFuel()" aria-label="Mise en route en minutes"/><small>min</small></label>
+            <div class="xm-cell"><span class="k">Mise en route</span><label class="xm-v"><input id="fuelStartup" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="20" oninput="computeFuel()" aria-label="Mise en route en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelStartup" data-d="-5" aria-label="Mise en route moins 5 minutes">−</button><button type="button" data-x="fuelStartup" data-d="5" aria-label="Mise en route plus 5 minutes">+</button></div></div>
             <div class="xm-cell"><span class="k">Dégagement</span><label class="xm-v"><input id="fuelAlt" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="20" oninput="computeFuel()" aria-label="Dégagement en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelAlt" data-d="-5" aria-label="Dégagement moins 5 minutes">−</button><button type="button" data-x="fuelAlt" data-d="5" aria-label="Dégagement plus 5 minutes">+</button></div></div>
@@ -2440,7 +2440,7 @@ function clearSectionFromBadge(side) {
     // seule valeur conservée par défaut : la réserve finale (30 min)
     const resEl = document.getElementById('fuelReserve');
     if (resEl) resEl.value = '30';
-    const suEl = document.getElementById('fuelStartup'); if (suEl) suEl.value = '10';
+    const suEl = document.getElementById('fuelStartup'); if (suEl) suEl.value = '20';
     const alEl = document.getElementById('fuelAlt'); if (alEl) alEl.value = '20';
     const exEl = document.getElementById('fuelExtra'); if (exEl) exEl.value = '15';
     const rt = document.getElementById('fuelRoundtrip');
