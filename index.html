@@ -696,6 +696,10 @@ select.inp{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xm
 
 /* Résultat en direct */
 .live{border:1.5px solid var(--ok-line);background:var(--ok-bg);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.live-big small{font:600 13px var(--body);color:var(--on-navy-dim);margin-left:2px}
+.live-roll{font:600 13.5px var(--body);color:var(--on-navy-dim);margin:2px 0 10px}
+.live-roll b{color:var(--on-navy);font-weight:800;font-size:15px}
+.live-roll[hidden]{display:none}
 .live-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .live-big{font:600 14px var(--body);color:var(--ok-text)}
 .live-big b{font:700 30px/1 var(--body);margin-right:2px}
@@ -1466,7 +1470,8 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
           <div id="depExplain" class="explain"></div>
         </div>
         <div class="live" id="depLive" hidden>
-          <div class="live-top"><span class="live-big"><b id="depLiveVal">—</b> m requis</span><span class="live-pill" id="depLivePill">—</span></div>
+          <div class="live-top"><span class="live-big"><b id="depLiveVal">—</b> m <small id="depLiveWhat">passage des 15 m</small></span><span class="live-pill" id="depLivePill">—</span></div>
+          <div class="live-roll" id="depLiveRollRow">Roulement <b id="depLiveRoll">—</b> m</div>
           <div class="live-bar"><i id="depLiveBar"></i></div>
           <div class="live-cap"><span class="live-margin">marge 30 % incluse</span><span id="depLiveAvail">—</span></div>
         </div>
@@ -1592,7 +1597,8 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
           <span id="arrLdwWarn" class="field-warn">Hors de la plage du manuel</span>
         </div>
         <div class="live" id="arrLive" hidden>
-          <div class="live-top"><span class="live-big"><b id="arrLiveVal">—</b> m requis</span><span class="live-pill" id="arrLivePill">—</span></div>
+          <div class="live-top"><span class="live-big"><b id="arrLiveVal">—</b> m <small id="arrLiveWhat">depuis 15 m</small></span><span class="live-pill" id="arrLivePill">—</span></div>
+          <div class="live-roll" id="arrLiveRollRow">Roulement <b id="arrLiveRoll">—</b> m</div>
           <div class="live-bar"><i id="arrLiveBar"></i></div>
           <div class="live-cap"><span class="live-margin">marge 30 % incluse</span><span id="arrLiveAvail">—</span></div>
         </div>
@@ -3348,6 +3354,9 @@ function computeDepPerf() {
   const spatsF   = 1.00;
   const toCalc   = Math.round(baseTO_pass * depWindF * depExtra * spatsF * depWetFactor);
   const toMargin = Math.round(toCalc * (1 + safety / 100));
+  // Roulement (valeur entre parenthèses du manuel), mêmes corrections et même marge
+  window.__rollReq = window.__rollReq || {};
+  window.__rollReq.dep = isNaN(baseTO_roll) ? null : Math.round(baseTO_roll * depWindF * depExtra * spatsF * depWetFactor * (1 + safety / 100));
 
   document.getElementById('toBasePass').textContent = Math.round(baseTO_pass) + ' m';
   document.getElementById('toBaseRoll').textContent = isNaN(baseTO_roll) ? '—' : Math.round(baseTO_roll) + ' m';
@@ -3417,10 +3426,13 @@ function computeArrPerf() {
       : windDistanceFactor(headwindForCalc);
   const ldgCalc      = Math.round(baseLDG_pass * arrWindF * arrExtra * arrWetFactor);
   const ldgMargin    = Math.round(ldgCalc * (1 + safety / 100));
+  window.__rollReq = window.__rollReq || {};
 
   // Avertissement DR300 : le manuel ne donne que le roulement (pas le passage 15m)
   const isRollOnly = profile === 'DR300' && LDG_DR300?._type === 'single_value_roll_only';
   const ldgPassLabel = isRollOnly ? ' m (roulement)' : ' m';
+  window.__rollReq.arr = isRollOnly || isNaN(baseLDG_roll) ? null : Math.round(baseLDG_roll * arrWindF * arrExtra * arrWetFactor * (1 + safety / 100));
+  window.__rollReq.arrRollOnly = !!isRollOnly;
   document.getElementById('ldgBasePass').textContent = Math.round(baseLDG_pass) + ldgPassLabel;
   document.getElementById('ldgBaseRoll').textContent = isNaN(baseLDG_roll) ? '—' : Math.round(baseLDG_roll) + ' m';
   document.getElementById('ldgWindF').textContent    = arrWindF.toFixed(2) + '×' + (useRegWind ? ' (régl.)' : '') + (taActive ? ' (5 kt arrière)' : '');
@@ -7494,6 +7506,10 @@ if ('serviceWorker' in navigator) {
     const req = parseInt(reqTxt, 10), av = parseInt(avTxt, 10);
     const st = chipState(side);
     $id(side + 'LiveVal').textContent = isNaN(req) ? '—' : req;
+    const rr = (window.__rollReq || {})[side], rollOnly = side === 'arr' && (window.__rollReq || {}).arrRollOnly;
+    $id(side + 'LiveRoll').textContent = rr != null ? rr : '—';
+    $id(side + 'LiveRollRow').hidden = rr == null;
+    $id(side + 'LiveWhat').textContent = rollOnly ? 'de roulement' : side === 'dep' ? 'passage des 15 m' : 'depuis 15 m';
     $id(side + 'LivePill').textContent = st === 'bad' ? 'Insuffisant' : st === 'ok' ? 'OK' : '—';
     $id(side + 'LiveAvail').textContent = av > 0 ? 'sur ' + av + ' m ' + (side === 'dep' ? 'TODA' : 'LDA') : '';
     $id(side + 'LiveBar').style.width = (av > 0 && req > 0 ? Math.min(100, req / av * 100) : 0).toFixed(1) + '%';
