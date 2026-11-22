@@ -7990,7 +7990,10 @@ if ('serviceWorker' in navigator) {
   // Avions connus au moment où la liste a été personnalisée : un avion ajouté depuis s'affiche d'office
   const KNOWN_V1 = ['F-GCAL', 'F-BXEK', 'F-BTBS', 'F-BTXS', 'F-GOVB', 'F-GTPE', 'F-GYLC', 'F-HATX'];
   const isNewAc = v => !(Array.isArray(settings.known) ? settings.known : KNOWN_V1).includes(v);
-  const shown = v => !AC_OFF.includes(v) && (!Array.isArray(settings.fleet) || settings.fleet.includes(v) || isNewAc(v));
+  // Avions décochés par défaut (pas au club en ce moment) : le pilote peut les recocher dans les paramètres
+  const AC_HIDE_DEFAULT = ['F-BTXS'];
+  const AC_DEFAULT = () => AC_ALL.map(a => a.v).filter(v => !AC_OFF.includes(v) && !AC_HIDE_DEFAULT.includes(v));
+  const shown = v => !AC_OFF.includes(v) && (Array.isArray(settings.fleet) ? (settings.fleet.includes(v) || isNewAc(v)) : !AC_HIDE_DEFAULT.includes(v));
   function applyFleet(all) {
     const cur = acSel.value;
     const list = AC_ALL.filter(a => all || shown(a.v) || a.v === cur);
@@ -8107,7 +8110,8 @@ if ('serviceWorker' in navigator) {
     const pil = val('setPilot');
     if (pil !== val('pilotName')) { $id('pilotName').value = pil; $id('pilotName').dispatchEvent(new Event('input', { bubbles: true })); }
     // Avions affichés
-    settings.fleet = fleetDraft.length === AC_ALL.filter(a => !AC_OFF.includes(a.v)).length ? null : fleetDraft.slice();
+    const def = AC_DEFAULT();
+    settings.fleet = fleetDraft.length === def.length && def.every(v => fleetDraft.includes(v)) ? null : fleetDraft.slice();
     settings.known = AC_ALL.map(a => a.v);
     applyFleet();
     // Avion par défaut : appliqué tout de suite si aucun avion n'est choisi
