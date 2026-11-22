@@ -1053,6 +1053,11 @@ body[data-view="pick"]{padding-bottom:24px}
 .rsv-dn button:disabled{cursor:default}
 .rsv-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .rsv-row > b{font:700 15px var(--body)}
+.rsv-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid var(--line);font:600 14px var(--body)}
+.rsv-line b{font-weight:700}
+.rsv-line span{font:700 14px var(--body);color:var(--ink);white-space:nowrap}
+.rsv-line span small{font:500 12.5px var(--body);color:var(--muted);margin-left:6px}
+.rsv-line[hidden]{display:none}
 .rsv-seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:minmax(86px,1fr);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:3px}
 .rsv-seg button{border:0;background:none;border-radius:8px;padding:6px 10px;color:var(--muted);font:700 14px/1.15 var(--body);cursor:pointer}
 .rsv-seg button small{display:block;font:500 11.5px var(--body);margin-top:1px}
@@ -1695,8 +1700,9 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
           <div class="rsv" id="rsv">
             <span class="sub">Type de vol</span>
             <div class="rsv-dn" role="group" aria-label="Type de vol"><button type="button" data-n="0"><span aria-hidden="true">☀</span> VFR jour</button><button type="button" data-n="1"><span aria-hidden="true">☾</span> VFR nuit</button></div>
-            <div class="rsv-row"><b>Réserve finale</b>
-              <div class="rsv-seg" role="group" aria-label="Réserve finale"><button type="button" data-r="30">30 min<small id="rsvL30">—</small></button><button type="button" data-r="45">45 min<small id="rsvL45">—</small></button></div></div>
+            <div class="rsv-line"><b>Réserve réglementaire</b><span id="rsvReg">30 min</span></div>
+            <div class="rsv-line" id="rsvClubRow"><b>Réserve club</b><span id="rsvClub">15 min</span></div>
+            <input type="hidden" id="fuelClubRes" value="15"/>
             <div class="rsv-foot" id="rsvFoot"></div>
           </div>
           <div class="res-row rsv-old">
@@ -1721,7 +1727,7 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
               <div class="xm-pm"><button type="button" data-x="fuelStartup" data-d="-5" aria-label="Mise en route moins 5 minutes">−</button><button type="button" data-x="fuelStartup" data-d="5" aria-label="Mise en route plus 5 minutes">+</button></div></div>
             <div class="xm-cell"><span class="k">Dégagement</span><label class="xm-v"><input id="fuelAlt" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="20" oninput="computeFuel()" aria-label="Dégagement en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelAlt" data-d="-5" aria-label="Dégagement moins 5 minutes">−</button><button type="button" data-x="fuelAlt" data-d="5" aria-label="Dégagement plus 5 minutes">+</button></div></div>
-            <div class="xm-cell"><span class="k">Extra fuel</span><label class="xm-v"><input id="fuelExtra" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="15" oninput="computeFuel()" aria-label="Extra fuel en minutes"/><small>min</small></label>
+            <div class="xm-cell"><span class="k">Extra fuel</span><label class="xm-v"><input id="fuelExtra" class="xm-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="0" value="0" oninput="computeFuel()" aria-label="Extra fuel en minutes"/><small>min</small></label>
               <div class="xm-pm"><button type="button" data-x="fuelExtra" data-d="-5" aria-label="Extra fuel moins 5 minutes">−</button><button type="button" data-x="fuelExtra" data-d="5" aria-label="Extra fuel plus 5 minutes">+</button></div></div>
             </div>
             <input id="fuelReserve" type="hidden" value="45"/>
@@ -1929,7 +1935,7 @@ main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-ou
       <div class="f"><span class="lbl">Marge de sécurité sur les distances</span>
         <span class="unit-in" style="max-width:140px"><input id="setMargin" class="inp" type="number" min="0" max="100" step="5" inputmode="numeric"/><span class="u">%</span></span>
         <span class="note" id="setMarginNote">Marge du club : 30 %. Appliquée aux distances de décollage et d'atterrissage.</span></div>
-      <div class="f"><span class="lbl">Réserve finale par défaut</span>
+      <div class="f" hidden><span class="lbl">Réserve finale par défaut</span>
         <div class="toggle-group"><button id="setRes30" class="toggle-btn" type="button" data-res="30">30 min</button><button id="setRes45" class="toggle-btn" type="button" data-res="45">45 min</button></div></div>
       <div class="f" hidden><span class="lbl">Affichage de la météo</span>
         <div class="toggle-group"><button id="setWxFr" class="toggle-btn" type="button">Français<small>Épars, averses…</small></button><button id="setWxIcao" class="toggle-btn" type="button">Codes OACI<small>SCT, SHRA…</small></button></div></div>
@@ -2122,7 +2128,7 @@ function fuelCompute() {
   const roundtrip = document.getElementById('fuelRoundtrip')?.checked;
   const cruiseBack = num('fuelBackH') * 60 + num('fuelBackM');
   const altTrans = num('fuelAlt');
-  const extra = num('fuelExtra'), reserve = num('fuelReserve');
+  const extra = num('fuelExtra'), reserve = num('fuelReserve'), clubRes = num('fuelClubRes');
   const litres = min => conso * min / 60;
   const phases = [];
   phases.push({ ph:'Mise en route', min:startup });
@@ -2130,12 +2136,13 @@ function fuelCompute() {
   if (roundtrip) phases.push({ ph:'Trip fuel retour', min:cruiseBack });
   if (altTrans > 0) phases.push({ ph:'Dégagement', min:altTrans });
   if (extra > 0) phases.push({ ph:'Extra fuel', min:extra });
-  phases.push({ ph:'Réserve finale', min:reserve });
+  phases.push({ ph:'Réserve réglementaire', min:reserve });
+  if (clubRes > 0) phases.push({ ph:'Réserve club', min:clubRes });
   let totMin = 0, totL = 0;
   phases.forEach(p => { p.L = litres(p.min); totMin += p.min; totL += p.L; });
   const remaining = usable - totL;
   const enduranceMin = conso > 0 ? usable / conso * 60 : 0;
-  const maxLdgMin = enduranceMin - reserve;
+  const maxLdgMin = enduranceMin - reserve - clubRes;
   const dep = document.getElementById('fuelDepTime').value;
   const tag = c => c ? (c.txt + (c.dayShift > 0 ? ' (J+' + c.dayShift + ')' : '')) : '—:—';
   const engineStop = (dep && conso > 0) ? tag(clockAdd(dep, enduranceMin)) : '—:—';
@@ -2188,6 +2195,7 @@ function computeFuel() {
   const altTrans  = num('fuelAlt');
   const extra     = num('fuelExtra');                          // min
   const reserve   = num('fuelReserve');                        // min
+  const clubRes   = num('fuelClubRes');                        // min, réserve propre au club
 
   const litres = min => conso * min / 60;
 
@@ -2206,7 +2214,9 @@ function computeFuel() {
     phases.push({ ph:'Dégagement', min:altTrans });
   if (extra > 0)
     phases.push({ ph:'Extra fuel', min:extra });
-  phases.push({ ph:'Réserve finale', min:reserve });
+  phases.push({ ph:'Réserve réglementaire', min:reserve });
+  if (clubRes > 0)
+    phases.push({ ph:'Réserve club', min:clubRes });
 
   let totMin = 0, totL = 0, rows = '';
   phases.forEach(p => {
@@ -2442,7 +2452,7 @@ function clearSectionFromBadge(side) {
     if (resEl) resEl.value = '30';
     const suEl = document.getElementById('fuelStartup'); if (suEl) suEl.value = '20';
     const alEl = document.getElementById('fuelAlt'); if (alEl) alEl.value = '20';
-    const exEl = document.getElementById('fuelExtra'); if (exEl) exEl.value = '15';
+    const exEl = document.getElementById('fuelExtra'); if (exEl) exEl.value = '0';
     const rt = document.getElementById('fuelRoundtrip');
     if (rt) { rt.checked = false; if (typeof fuelToggleRoundtrip === 'function') fuelToggleRoundtrip(); }
     const fSel = document.getElementById('fuelAircraftSel');
@@ -7558,15 +7568,11 @@ if ('serviceWorker' in navigator) {
     $id('fuelNight').disabled = autoNight;
     $id('fuelNightSub').textContent = autoNight ? 'détecté : vol après la nuit aéronautique' : '';
     document.querySelector('#stepFuel .night-row').hidden = false;
-    // Avions ACBT : 45 min proposées par défaut (une fois par avion choisi), 30 min reste possible
-    if (acbt && !night && ac !== resAcbtFor) { resAcbtFor = ac; if (val('fuelReserve') !== '45') { $id('fuelReserve').value = '45'; computeFuel(); } }
-    if (!acbt) resAcbtFor = null;
+    // Réserve réglementaire : 30 min en VFR de jour, 45 min en VFR de nuit.
+    // Réserve club : 15 min en plus sur les avions ACBT (d'où les « 45 min » de jour au club).
     const why = night ? 'night' : null;
-    if (why) {
-      if (val('fuelReserve') !== '45') { $id('fuelReserve').value = '45'; computeFuel(); }
-    } else if (resForced) {
-      $id('fuelReserve').value = acbt ? '45' : (window.__defaultReserve ? window.__defaultReserve() : '45'); computeFuel();
-    }
+    const reg = night ? '45' : '30', club = acbt ? '15' : '0';
+    if (val('fuelReserve') !== reg || val('fuelClubRes') !== club) { $id('fuelReserve').value = reg; $id('fuelClubRes').value = club; computeFuel(); }
     resForced = why;
     $id('fuelRes30').disabled = !!why;
     // Réserve imposée : on affiche la valeur, pas un choix qui n'en est pas un
@@ -7646,21 +7652,16 @@ if ('serviceWorker' in navigator) {
       b.classList.toggle('on', (b.dataset.n === '1') === night);
       b.disabled = auto && b.dataset.n === '0';
     });
-    document.querySelectorAll('#rsv .rsv-seg button').forEach(b => {
-      b.classList.toggle('on', +b.dataset.r === res);
-      b.disabled = night && b.dataset.r === '30';
-    });
     const L = m => conso > 0 ? frNum(Math.round(conso * m / 6) / 10) + ' L' : '— L';
-    $id('rsvL30').textContent = L(30); $id('rsvL45').textContent = L(45);
-    const ac = val('aircraftSel'), acbt = !!ac && clubOf(ac).k === 'acbt';
-    $id('rsvFoot').textContent = night
-      ? '☾ Réglementation VFR de nuit : 45 min' + (auto ? ' · vol après la nuit aéronautique' : '')
-      : acbt ? 'ⓘ 45 min par défaut sur les avions ACBT' : '';
+    const club = +val('fuelClubRes') || 0;
+    $id('rsvReg').innerHTML = res + ' min<small>' + L(res) + '</small>';
+    $id('rsvClub').innerHTML = club + ' min<small>' + L(club) + '</small>';
+    $id('rsvClubRow').hidden = !club;
+    $id('rsvFoot').textContent = night && auto ? '☾ Vol après la nuit aéronautique : VFR de nuit' : '';
   }
   $id('rsv').addEventListener('click', e => {
     const n = e.target.closest('.rsv-dn button'), r = e.target.closest('.rsv-seg button');
     if (n && !n.disabled) { const want = n.dataset.n === '1'; if ($id('fuelNight').checked !== want) $id('fuelNight').click(); }
-    if (r && !r.disabled) $id(r.dataset.r === '30' ? 'fuelRes30' : 'fuelRes45').click();
     setTimeout(rsvPaint, 0);
   });
   { const _cfR = window.computeFuel; window.computeFuel = function () { const x = _cfR.apply(this, arguments); try { rsvPaint(); } catch (e) {} return x; }; }
@@ -8475,7 +8476,7 @@ if ('serviceWorker' in navigator) {
       if (f.depTime) setIn('fuelDepTime', f.depTime);
       if (f.night && !$id('fuelNight').disabled) { $id('fuelNight').checked = true; $id('fuelNight').dispatchEvent(new Event('change', { bubbles: true })); }
       await wait(60);
-      if (f.reserve && !$id('fuelRes30').disabled) { $id('fuelReserve').value = f.reserve; }
+      try { applyReserveRule(); } catch (e) {}
       fuelTouched = true;
       try { computeFuel(); } catch (e) {}
       // Centrage
@@ -9156,7 +9157,7 @@ if ('serviceWorker' in navigator) {
       spatsPenalty: (window.__spatsFuelFactor && window.__spatsFuelFactor() > 1),
       totalL: frN(f.totL.toFixed(1)), remainingL: frN(Math.abs(f.remaining).toFixed(1)), totalTime: fmtHM(f.totMin),
       night: !!($id('fuelNight') && $id('fuelNight').checked),
-      phases: f.phases.map(p => ({ ph: p.ph === 'Réserve finale' && $id('fuelNight') && $id('fuelNight').checked ? 'Réserve finale (VFR de nuit)' : p.ph, time: fmtHM(p.min), L: frN(p.L.toFixed(1)) })),
+      phases: f.phases.map(p => ({ ph: p.ph === 'Réserve réglementaire' && $id('fuelNight') && $id('fuelNight').checked ? 'Réserve réglementaire (VFR de nuit)' : p.ph, time: fmtHM(p.min), L: frN(p.L.toFixed(1)) })),
       depTime: f.dep || '', maxLdg: f.dep ? f.maxLdg : '', engineStop: f.dep ? f.engineStop : ''
     };
   }
