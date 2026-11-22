@@ -7968,7 +7968,8 @@ if ('serviceWorker' in navigator) {
   const AC_ALL = [...acSel.options].filter(o => o.value).map(o => ({ v: o.value, t: o.textContent }));
   const AC_PH = (acSel.options[0] && !acSel.options[0].value) ? acSel.options[0].textContent : 'Choisir un avion';
   // Avions désactivés pour tout le club (indisponibles) : retirer un code de cette liste pour les réactiver
-  const AC_OFF = [];
+  // F-GTPE et F-HATX (Aéroclub de Picardie Amiens Métropole) : désactivés le 2026-11-22, le club n'utilise pas l'appli
+  const AC_OFF = ['F-GTPE', 'F-HATX'];
   // Club propriétaire de chaque avion (regroupement de la liste, fiche PDF)
   const CLUBS = [
     { k: 'acbt', n: 'Aéroclub de Beauvais-Tillé', s: 'LFOB' },
