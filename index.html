@@ -1273,6 +1273,40 @@ html,body{overflow-x:clip;touch-action:pan-y pinch-zoom}
 main.app.swipe-l>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swl .24s ease-out}
 main.app.swipe-r>:is(#flow,#cgPane,#fiche,#ficheHist){animation:swr .24s ease-out}
 @media (prefers-reduced-motion:reduce){main.app>:is(#flow,#cgPane,#fiche,#ficheHist){animation:none!important}}
+
+/* ── Grands écrans (PC, tablette paysage) : utiliser la largeur, le téléphone ne change pas ── */
+@media (min-width:1000px){
+  :root{--wide:1180px}
+  .app{max-width:var(--wide);padding:18px 24px 28px}
+  .band{padding-left:max(24px,calc((100% - var(--wide))/2 + 24px));padding-right:max(24px,calc((100% - var(--wide))/2 + 24px))}
+  .tabbar{padding-left:max(0px,calc((100% - var(--wide))/2));padding-right:max(0px,calc((100% - var(--wide))/2))}
+  /* Étapes : cartes sur deux colonnes, bilan et bouton sur toute la largeur */
+  .step.is-open .step-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+  .step-body > *{grid-column:1/-1}
+  .step-body > .blk,.step-body > .grp{grid-column:auto}
+  .step-body > .blk + .blk{border-top:1px solid var(--line)}
+  .step-body > .btn.big{justify-self:end;min-width:340px;width:auto}
+  /* Carburant : « Le vol » à droite, carburant et heure empilés à gauche */
+  #stepFuel .step-body{grid-template-rows:auto 1fr}
+  #stepFuel .step-body > .blk:nth-child(1){grid-column:1;grid-row:1}
+  #stepFuel .step-body > .blk:nth-child(2){grid-column:2;grid-row:1/span 2}
+  #stepFuel .step-body > .blk:nth-child(3){grid-column:1;grid-row:2}
+  #stepFuel .step-body > .blk:nth-child(-n+3){align-self:start}
+  /* Arrivée : la masse à l'atterrissage sur toute la largeur */
+  .step-body > .ldw-blk{grid-column:1/-1}
+  /* Centrage : masses et bilan à gauche, enveloppe à droite */
+  #cgMain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+  #cgMain[hidden]{display:none}
+  #cgMain > .cgp-card:nth-child(1){grid-column:1;grid-row:1}
+  #cgMain > .cgp-card:nth-child(2){grid-column:2;grid-row:1/span 3;position:sticky;top:84px}
+  #cgMain > .cgp-live{grid-column:1;grid-row:2}
+  #cgMain > .cgp-det{grid-column:1;grid-row:3}
+  /* Fiche : résultats sur deux colonnes */
+  .fiche{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+  body:not([data-view="fiche"]) .fiche{display:none}
+  .fiche > *{grid-column:1/-1}
+  .fiche > .res{grid-column:auto}
+}
 </style>
 </head>
 <body>
