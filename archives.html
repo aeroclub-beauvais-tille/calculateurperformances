@@ -121,6 +121,22 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
 .hash{font:500 11px var(--mono,ui-monospace),Menlo,Consolas,monospace;color:var(--muted);word-break:break-all;margin-top:8px}
 .acts{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px}
 .acts .btn{height:46px;justify-content:center}
+/* PC : liste des fiches en 2 colonnes à gauche, détail toujours ouvert à droite */
+@media (min-width:1100px){
+  .topbar-in,.band-in,main{max-width:1440px}
+  main{padding:20px 24px 48px}
+  #app:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:24px;align-items:start}
+  .tl{padding-left:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+  .tl::before,.it::before{display:none}
+  .it{margin:0;border-left:4px solid var(--ok)}
+  .it.bad{border-left-color:var(--err)}
+  .it.warn{border-left-color:var(--warn)}
+  .it.sel{border-color:var(--ink);border-left-color:var(--ink)}
+  .sheet-bg{display:none!important}
+  .sheet{position:sticky;top:76px;width:auto;max-height:calc(100dvh - 96px);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);animation:none;overflow:auto}
+  .sheet .sh-x{display:none}
+  .keep{text-align:left;margin-left:2px}
+}
 </style>
 </head>
 <body>
@@ -150,15 +166,17 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
   </section>
 
   <div id="app" hidden>
+    <div class="liste">
     <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Pilote, avion, terrain, n° de fiche" aria-label="Rechercher"></label>
     <div class="count" id="count"></div>
     <div id="rows"></div>
     <p class="keep">Les fiches de plus de 6 mois sont supprimées automatiquement. Exporter le CSV pour les garder.</p>
+    </div>
+    <aside class="sheet" id="detail" hidden aria-label="Détail de la fiche"></aside>
   </div>
 </main>
 <div class="sheet-bg" id="sheetBg" hidden></div>
-<aside class="sheet" id="detail" hidden aria-label="Détail de la fiche"></aside>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -610,7 +628,14 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
     render(q, j.total);
   }
 
-  function closeSheet() { $('detail').hidden = true; $('sheetBg').hidden = true; document.querySelectorAll('.it.sel').forEach(b => b.classList.remove('sel')); }
+  const grand = matchMedia('(min-width:1100px)');
+  function closeSheet() {
+    document.querySelectorAll('.it.sel').forEach(b => b.classList.remove('sel'));
+    $('sheetBg').hidden = true;
+    // Sur PC, le panneau reste ouvert à droite
+    if (grand.matches) $('detail').innerHTML = '<div class="empty">Choisissez une fiche dans la liste pour voir son détail.</div>';
+    else $('detail').hidden = true;
+  }
   async function show(id) {
     document.querySelectorAll('.it').forEach(b => b.classList.toggle('sel', b.dataset.id === id));
     $('sheetBg').hidden = false; $('detail').hidden = false;
@@ -667,6 +692,7 @@ main{max-width:760px;margin:0 auto;padding:14px 14px 48px}
     try {
       await load('');
       $('loginCard').hidden = true; $('app').hidden = false; $('logout').hidden = false; $('band').hidden = false;
+      if (grand.matches) { $('detail').hidden = false; if (list.length) show(list[0].id).catch(() => closeSheet()); else closeSheet(); }
       try { sessionStorage.setItem(KEY, pw); } catch (e) {}
     } catch (e) {
       $('loginCard').hidden = false; $('app').hidden = true; $('band').hidden = true;
