@@ -7,7 +7,7 @@
  *
  * Réglages nécessaires dans Cloudflare (voir le guide) :
  *   - liaison D1 nommée  DB
- *   - secret            ARCHIVE_PASSWORD
+ *   - secret            MOT_DE_PASSE_ADMIN (mot de passe admin unique du club ; à défaut, l'ancien ARCHIVE_PASSWORD)
  * La table est créée automatiquement au premier appel.
  */
 
@@ -86,8 +86,10 @@ function corsHeaders(request) {
   };
 }
 
+const motDePasse = (env) => String(env.MOT_DE_PASSE_ADMIN || env.ARCHIVE_PASSWORD || '').trim();
+
 function checkPassword(request, env) {
-  const expected = String(env.ARCHIVE_PASSWORD || '').trim();
+  const expected = motDePasse(env);
   const auth = request.headers.get('Authorization') || '';
   const given = (auth.startsWith('Bearer ') ? auth.slice(7) : '').trim();
   if (!expected || given.length !== expected.length) return false;
@@ -141,7 +143,7 @@ async function recevoir({ request, env }) {
 /* ── Consultation (page archives.html) ── */
 async function consulter({ request, env }) {
   if (!env.DB) return json({ ok: false, error: 'Base D1 non reliée (liaison DB manquante).' }, 503);
-  if (!env.ARCHIVE_PASSWORD) return json({ ok: false, error: 'Mot de passe des archives non défini (ARCHIVE_PASSWORD).' }, 503);
+  if (!motDePasse(env)) return json({ ok: false, error: 'Mot de passe admin non défini (secret MOT_DE_PASSE_ADMIN).' }, 503);
   if (!checkPassword(request, env)) return json({ ok: false, error: 'Mot de passe incorrect.' }, 401);
   await ensureTable(env.DB);
   await purge(env.DB);
@@ -175,7 +177,7 @@ async function consulter({ request, env }) {
 /* ── Suppression (page archives.html, protégée par le mot de passe) ── */
 async function supprimer({ request, env }) {
   if (!env.DB) return json({ ok: false, error: 'Base D1 non reliée (liaison DB manquante).' }, 503);
-  if (!env.ARCHIVE_PASSWORD) return json({ ok: false, error: 'Mot de passe des archives non défini (ARCHIVE_PASSWORD).' }, 503);
+  if (!motDePasse(env)) return json({ ok: false, error: 'Mot de passe admin non défini (secret MOT_DE_PASSE_ADMIN).' }, 503);
   if (!checkPassword(request, env)) return json({ ok: false, error: 'Mot de passe incorrect.' }, 401);
   const id = new URL(request.url).searchParams.get('id') || '';
   if (!ID_RE.test(id)) return json({ ok: false, error: 'Numéro de fiche invalide.' }, 400);
